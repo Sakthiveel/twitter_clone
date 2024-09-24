@@ -26,7 +26,9 @@
     "@types/cors": "^2.8.17",
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "express-fileupload": "^1.5.1",
     "firebase-admin": "^12.5.0",
+    "imagekit": "^5.2.0",
     "joi": "^17.13.3"
   }
 }
