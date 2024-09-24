@@ -1,11 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
-import { addUser, updateUser } from "./src/database/User";
+import { addUser, summa, updateUser } from "./src/database/User";
 import { addPost, updatePost } from "./src/database/Post";
 import { authHandler } from "./src/database/auth";
 import cors from "cors";
 import fileUpload, { UploadedFile } from "express-fileupload";
 import ImageKit from "imagekit";
 import { imageUploader } from "./src/database/utils/utils";
+import fs from "node:fs";
 const app = express();
 
 // Middleware to parse JSON bodies
@@ -31,30 +32,29 @@ interface FileUploadRequest extends Request {
 app.get("/", (req: Request, res: Response) => {
   res.send("Server running all good");
 });
+
 app.post("/v1/addUser", async (req: FileUploadRequest, res: Response) => {
   try {
     const userInfo = req.body;
-    console.log("add user", { userInfo });
-    // Access the uploaded file
-    const { profile_photo, bg_photo }: UploadedFile = req.files;
-    let res_1: string, res_2: string;
+    let { profile_photo = "", bg_photo = "" } = req.files;
+    throw new Error("Temporary shutdownn");
     if (typeof profile_photo === "object") {
-      res_1 = await imageUploader(profile_photo);
-      if (!res_1) {
-        throw Error("Image Upload Failed");
+      profile_photo = await imageUploader(profile_photo);
+      if (!profile_photo) {
+        throw new Error("Image Upload Failed");
       }
     }
     if (typeof bg_photo === "object") {
-      res_2 = await imageUploader(bg_photo);
-      if (!res_2) {
-        throw Error("Image Upload Failed");
+      bg_photo = await imageUploader(bg_photo);
+      if (!bg_photo) {
+        throw new Error("Image Upload Failed");
       }
     }
-
+    Object.assign(userInfo, { bg_photo, profile_photo });
     await addUser(userInfo);
     res.send({ status: true });
   } catch (err) {
-    res.send({ status: false, res: err });
+    res.send({ status: false, res: err.message });
   }
 });
 
@@ -109,6 +109,11 @@ app.post("/v1/updatePost", authHandler, async (req: Request, res: Response) => {
     res.send({ staus: false, res: err });
   }
 });
+
+setTimeout(async () => {
+  console.log("callled summa function");
+  await summa();
+}, 10000);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running at ${process.env.SERVER_PORT}`);

@@ -3,3 +3,4 @@ dist/
 checklist.txt
 backend/.env
 frontend/.env
+backend/service_account_private_key.json

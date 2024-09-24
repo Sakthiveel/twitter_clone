@@ -1,35 +1,94 @@
 import React from "react";
-import { defaultuser } from "../actions/actions";
-import { User } from "../Schema/Schema";
+import { addUser, defaultuser } from "../actions/actions";
+import { User, UserKeys, userSchema } from "../Schema/Schema";
+import { uid } from "uid";
+import { ValidationError } from "joi";
 
 export default function UserProfile() {
+  const { profile_photo, bg_photo, handler_name, bio, display_name, age } =
+    UserKeys;
   const [userInfo, setUserInfo] = React.useState<User>(() => defaultuser);
-  const [previewImg, setPreviewImg] = React.useState<string | null>(null);
-  const fileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [previewProfilePhot, setPreviewProifilePhoto] = React.useState<
+    string | null
+  >(null);
+  const [previewBgPhoto, setPreviewBgPhoto] = React.useState<string | null>(
+    null
+  );
+
+  const imageHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.size > 1048576) {
       alert("Image size is greater than 1mb . Please choose another photo");
       return;
     }
     if (file) {
-      console.log({ file });
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewImg(imageUrl);
+      setUserInfo((prevSt) =>
+        Object.assign({}, prevSt, {
+          [event.target.name]: file,
+        })
+      );
+
+      if (profile_photo === event.target.name) {
+        setPreviewProifilePhoto(URL.createObjectURL(file));
+      }
+      if (bg_photo === event.target.name) {
+        setPreviewBgPhoto(URL.createObjectURL(file));
+      }
     }
   };
+
+  const saveHandler = async () => {
+    //edit hadling here
+
+    const { error } = userSchema.validate(userInfo);
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(userInfo)) {
+      formData.append(key, value);
+    }
+    console.log({ userInfo });
+    for (const [key, value] of formData.entries()) {
+      console.log({ key, value });
+    }
+    try {
+      const response = await addUser(formData);
+      console.log({ response });
+    } catch (err) {
+      alert(err);
+    }
+  };
+
   return (
     <div className="flex flex-col w-[500px] gap-2">
-      {previewImg && (
-        <img src={previewImg} alt="profile_photo" className="size-40" />
+      {previewProfilePhot && (
+        <img src={previewProfilePhot} alt="profile_photo" className="size-40" />
+      )}
+      {previewBgPhoto && (
+        <img src={previewBgPhoto} alt="background-photo" className="size-40" />
       )}
       <input
         type="file"
+        name={UserKeys.bg_photo}
         accept="image/*"
         className="file-input file-input-bordered file-input-md w-full max-w-xs"
-        onChange={fileHandler}
+        onChange={imageHandler}
       />
       <input
+        type="file"
+        name={UserKeys.profile_photo}
+        accept="image/*"
+        className="file-input file-input-bordered file-input-md w-full max-w-xs"
+        onChange={imageHandler}
+      />
+
+      <input
         type="text"
+        name={display_name}
         placeholder="Name"
         className="input input-bordered w-full max-w-xs"
         value={userInfo.display_name}
@@ -40,7 +99,20 @@ export default function UserProfile() {
         }
       />
       <input
+        type="text"
+        name={handler_name}
+        placeholder="handler_name"
+        className="input input-bordered w-full max-w-xs"
+        value={userInfo.handler_name}
+        onChange={(ev) =>
+          setUserInfo((prevSt) =>
+            Object.assign({}, prevSt, { display_name: ev.target.value })
+          )
+        }
+      />
+      <input
         type="number"
+        name={age}
         placeholder="age"
         className="input input-bordered w-full max-w-xs"
         value={userInfo.age}
@@ -53,6 +125,7 @@ export default function UserProfile() {
       <textarea
         className="textarea"
         placeholder="Bio"
+        name={bio}
         value={userInfo.bio}
         onChange={(ev) =>
           setUserInfo((prevSt) =>
@@ -60,7 +133,9 @@ export default function UserProfile() {
           )
         }
       ></textarea>
-      <button className="btn bg-blue-500 text-white">Save changes</button>
+      <button className="btn bg-blue-500 text-white" onClick={saveHandler}>
+        Save changes
+      </button>
     </div>
   );
 }

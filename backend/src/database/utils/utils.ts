@@ -1,7 +1,9 @@
 import { imagekit } from "../../..";
 import { UploadedFile } from "express-fileupload";
 
-export const imageUploader = async (file: UploadedFile): Promise<string> => {
+export const imageUploader = async (
+  file: UploadedFile
+): Promise<string | null> => {
   try {
     const uploadRes = await imagekit.upload({
       file: file.data,

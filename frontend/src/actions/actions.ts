@@ -9,26 +9,23 @@ export const defaultuser: User = {
   profile_photo: null,
   bio: "default bio here",
 };
-export const addUser = async (userInfo: User = defaultuser) => {
-  // todo: create an interface for the data modal
-  const { error } = userSchema.validate(userInfo);
-  if (error) throw error; // might need proper error handling here
+// data validation should be handled before calling this function
+export const addUser = async (userInfo: FormData) => {
   let res;
   try {
     console.log("addUser fun", { url: import.meta.env.VITE_SERVER_URL });
     const requestOptions: RequestInit = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
     };
     res = await fetch(`${import.meta.env.VITE_SERVER_URL}/v1/addUser`, {
       ...requestOptions,
-      body: JSON.stringify(userInfo),
+      body: userInfo,
     });
     res = await res.json();
     console.log("add user", { res });
     if (!res.status) throw Error("Somethign went wrong");
   } catch (err) {
+    console.log({ err });
     // throw err;
   }
-  return res;
 };
