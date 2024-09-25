@@ -1,12 +1,12 @@
 import React from "react";
 import { addUser, defaultuser } from "../actions/actions";
 import { User, UserKeys, userSchema } from "../Schema/Schema";
-import { uid } from "uid";
-import { ValidationError } from "joi";
+import { useDispatch, useSelector } from "react-redux";
+import { increment } from "../store/userAction";
+import { useParams } from "react-router-dom";
+import { globalLoaderToggle } from "../store/Action";
 
 export default function UserProfile() {
-  const { profile_photo, bg_photo, handler_name, bio, display_name, age } =
-    UserKeys;
   const [userInfo, setUserInfo] = React.useState<User>(() => defaultuser);
   const [previewProfilePhot, setPreviewProifilePhoto] = React.useState<
     string | null
@@ -15,7 +15,15 @@ export default function UserProfile() {
     null
   );
 
+  const { handler_name } = useParams();
+  const {
+    main: { globalLoader },
+  } = useSelector((state) => state);
+  console.log("userProfile", { handler_name, globalLoader });
+  const dispatch = useDispatch();
+
   const imageHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(increment());
     const file = event.target.files?.[0];
     if (file && file.size > 1048576) {
       alert("Image size is greater than 1mb . Please choose another photo");
@@ -28,10 +36,10 @@ export default function UserProfile() {
         })
       );
 
-      if (profile_photo === event.target.name) {
+      if (UserKeys.profile_photo === event.target.name) {
         setPreviewProifilePhoto(URL.createObjectURL(file));
       }
-      if (bg_photo === event.target.name) {
+      if (UserKeys.bg_photo === event.target.name) {
         setPreviewBgPhoto(URL.createObjectURL(file));
       }
     }
@@ -78,6 +86,10 @@ export default function UserProfile() {
         className="file-input file-input-bordered file-input-md w-full max-w-xs"
         onChange={imageHandler}
       />
+      <button onClick={() => dispatch(globalLoaderToggle())}>
+        click here{" "}
+      </button>
+      <span>{globalLoader ? "Loading" : "Not Loading"}</span>
       <input
         type="file"
         name={UserKeys.profile_photo}
@@ -88,7 +100,7 @@ export default function UserProfile() {
 
       <input
         type="text"
-        name={display_name}
+        name={UserKeys.display_name}
         placeholder="Name"
         className="input input-bordered w-full max-w-xs"
         value={userInfo.display_name}
@@ -100,7 +112,7 @@ export default function UserProfile() {
       />
       <input
         type="text"
-        name={handler_name}
+        name={UserKeys.handler_name}
         placeholder="handler_name"
         className="input input-bordered w-full max-w-xs"
         value={userInfo.handler_name}
@@ -112,7 +124,7 @@ export default function UserProfile() {
       />
       <input
         type="number"
-        name={age}
+        name={UserKeys.age}
         placeholder="age"
         className="input input-bordered w-full max-w-xs"
         value={userInfo.age}
@@ -125,7 +137,7 @@ export default function UserProfile() {
       <textarea
         className="textarea"
         placeholder="Bio"
-        name={bio}
+        name={UserKeys.bio}
         value={userInfo.bio}
         onChange={(ev) =>
           setUserInfo((prevSt) =>

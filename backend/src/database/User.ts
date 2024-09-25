@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { db } from "./auth";
+import { db } from ".";
 
 const schema = Joi.object({
   uid: Joi.string().required(),

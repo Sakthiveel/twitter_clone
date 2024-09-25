@@ -1,4 +1,4 @@
-import { imagekit } from "../../..";
+import { imagekit } from "../..";
 import { UploadedFile } from "express-fileupload";
 
 export const imageUploader = async (

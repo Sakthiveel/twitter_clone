@@ -1,8 +1,10 @@
 import React from "react";
-import RightSidebar from "../components/RightSidebar";
+import RightSidebar from "../../components/RightSidebar";
 import HomeIcon from "@mui/icons-material/HomeOutlined";
-import PostCards from "../components/PostCards";
-import { addUser } from "../actions/actions";
+import PostCards from "../../components/PostCards";
+import { addUser } from "../../actions/actions";
+import Modal from "../../components/UI/Modal";
+import CreatePostModal from "./CreatePostModa";
 const HomeContentNavigate = () => {
   return (
     <div className="flex py-2">
@@ -26,6 +28,8 @@ export default function Home() {
   console.log(img);
   return (
     <div className="flex">
+      <CreatePostModal />
+      {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
       <RightSidebar />
       <div className="w-[400px] border border-white">
         <HomeContentNavigate />
@@ -47,7 +51,9 @@ export default function Home() {
             <div className="divider"></div>
             <button
               className="btn self-end bg-blue-500 text-white w-fit"
-              onClick={() => addUser()}
+              onClick={() =>
+                document.getElementById("create_post_modal").showModal()
+              }
             >
               Post
             </button>

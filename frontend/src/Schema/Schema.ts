@@ -61,7 +61,7 @@ export interface Post {
   [PostKeys.created_by]: string;
   [PostKeys.text_content]: string;
   [PostKeys.images]: Array<File | string>;
-  [PostKeys.likes_count]: number;
+  [PostKeys.likes_count]?: number;
   [PostKeys.visibility]: string;
 }
 

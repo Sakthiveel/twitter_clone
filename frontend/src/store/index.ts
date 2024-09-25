@@ -1,6 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./userAction.ts";
+import BaseReducer from "./Action.ts";
+import AuthReducer from "./AuthAction.ts";
 
 export default configureStore({
-  reducer: counterReducer,
+  reducer: { auth: AuthReducer, main: BaseReducer },
+  // reducer: { main: BaseReducer },
 });

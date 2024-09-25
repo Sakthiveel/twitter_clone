@@ -2,8 +2,9 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { Routes, Route } from "react-router-dom";
 import viteLogo from "/vite.svg";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import UserProfile from "./pages/UserProfile";
+import CreatePostModal from "./pages/CreatePostModal";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -11,8 +12,7 @@ function App() {
     <div className="app">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/userprofile" element={<UserProfile />} />
-        <Route path="/" element={<Home />} />
+        <Route path="/:handler_name" element={<UserProfile />} />
       </Routes>
     </div>
   );

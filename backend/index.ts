@@ -5,7 +5,7 @@ import { authHandler } from "./src/database/auth";
 import cors from "cors";
 import fileUpload, { UploadedFile } from "express-fileupload";
 import ImageKit from "imagekit";
-import { imageUploader } from "./src/database/utils/utils";
+import { imageUploader } from "./src/utils/utils";
 import fs from "node:fs";
 const app = express();
 
