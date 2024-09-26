@@ -15,26 +15,33 @@ export const UserKeys = {
   age: "age",
   created_at: "created_at",
   modified_at: "modified_at",
+  email: "email",
+  authType: "authType",
 } as const;
-
+export interface tempUser {
+  [UserKeys.uid]: string;
+  [UserKeys.display_name]: string | null;
+  [UserKeys.email]: string | null;
+  [UserKeys.profile_photo]: string | undefined | null;
+}
 export interface User {
   [UserKeys.uid]: string;
-  [UserKeys.profile_photo]: File | string | null;
-  [UserKeys.bg_photo]: File | string | null;
   [UserKeys.handler_name]: string;
-  [UserKeys.bio]?: string;
   [UserKeys.display_name]: string;
-  [UserKeys.age]: number;
   [UserKeys.created_at]: Date;
   [UserKeys.modified_at]?: Date;
+  [UserKeys.profile_photo]?: File | string | null;
+  [UserKeys.bg_photo]?: File | string | null;
+  [UserKeys.age]?: number;
+  [UserKeys.bio]?: string;
 }
 
 export const userSchema = Joi.object({
   uid: Joi.string().required(),
   handler_name: Joi.string().required(),
   display_name: Joi.string().required(),
-  age: Joi.number().required(),
   created_at: Joi.date().required(),
+  age: Joi.number(),
   modified_at: Joi.date(),
   [UserKeys.profile_photo]: Joi.any(), // todo check this
   [UserKeys.bg_photo]: Joi.any(), // todo check this

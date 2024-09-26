@@ -53,18 +53,8 @@ export default function UserProfile() {
       alert(error.message);
       return;
     }
-
-    const formData = new FormData();
-
-    for (const [key, value] of Object.entries(userInfo)) {
-      formData.append(key, value);
-    }
-    console.log({ userInfo });
-    for (const [key, value] of formData.entries()) {
-      console.log({ key, value });
-    }
     try {
-      const response = await addUser(formData);
+      const response = await addUser(userInfo);
       console.log({ response });
     } catch (err) {
       alert(err);

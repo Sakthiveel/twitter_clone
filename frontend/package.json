@@ -16,6 +16,7 @@
     "@mui/material": "^6.1.1",
     "@reduxjs/toolkit": "^2.2.7",
     "autoprefixer": "^10.4.20",
+    "firebase": "^10.13.2",
     "joi": "^17.13.3",
     "postcss": "^8.4.47",
     "react": "^18.3.1",

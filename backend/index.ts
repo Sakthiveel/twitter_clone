@@ -1,12 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
-import { addUser, summa, updateUser } from "./src/database/User";
+import { addUser, updateUser } from "./src/database/User";
 import { addPost, updatePost } from "./src/database/Post";
 import { authHandler } from "./src/database/auth";
 import cors from "cors";
 import fileUpload, { UploadedFile } from "express-fileupload";
 import ImageKit from "imagekit";
 import { imageUploader } from "./src/utils/utils";
-import fs from "node:fs";
 const app = express();
 
 // Middleware to parse JSON bodies
@@ -15,9 +14,9 @@ app.use(express.json());
 app.use(fileUpload());
 
 export const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY ?? null,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? null,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT ?? null,
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
 const corsOptions = {
@@ -33,24 +32,29 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Server running all good");
 });
 
+app.get("/handler_name_exist", (req, res) => {
+  res.send(JSON.stringify("Selena Gomez"));
+});
+
 app.post("/v1/addUser", async (req: FileUploadRequest, res: Response) => {
   try {
     const userInfo = req.body;
-    let { profile_photo = "", bg_photo = "" } = req.files;
-    throw new Error("Temporary shutdownn");
+    let { profile_photo = "", bg_photo = "" } = req.files ?? {};
+    console.log("end point", { files: req.files });
     if (typeof profile_photo === "object") {
       profile_photo = await imageUploader(profile_photo);
       if (!profile_photo) {
         throw new Error("Image Upload Failed");
       }
+      Object.assign(userInfo, { profile_photo });
     }
     if (typeof bg_photo === "object") {
       bg_photo = await imageUploader(bg_photo);
       if (!bg_photo) {
         throw new Error("Image Upload Failed");
       }
+      Object.assign(userInfo, { bg_photo });
     }
-    Object.assign(userInfo, { bg_photo, profile_photo });
     await addUser(userInfo);
     res.send({ status: true });
   } catch (err) {
@@ -109,11 +113,6 @@ app.post("/v1/updatePost", authHandler, async (req: Request, res: Response) => {
     res.send({ staus: false, res: err });
   }
 });
-
-setTimeout(async () => {
-  console.log("callled summa function");
-  await summa();
-}, 10000);
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running at ${process.env.SERVER_PORT}`);

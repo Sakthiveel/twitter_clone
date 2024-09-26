@@ -7,6 +7,7 @@ export const BaseSlice = createSlice({
   },
   reducers: {
     globalLoaderToggle: (state) => {
+      console.log("global Loader", { state });
       state.globalLoader = state.globalLoader ? false : true;
     },
   },

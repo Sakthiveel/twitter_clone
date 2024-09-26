@@ -1,45 +1,61 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { Routes, Route } from "react-router-dom";
-import viteLogo from "/vite.svg";
+import React from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import UserProfile from "./pages/UserProfile";
-import CreatePostModal from "./pages/CreatePostModal";
+import SignIn from "./pages/SignIn/SignIn";
+import { useDispatch, useSelector } from "react-redux";
+import { auth as firebaseAuth } from "./Firebase";
+import { globalLoaderToggle } from "./store/Action";
+import { checkUserExist } from "./actions/actions";
+import { setTempUserInfo, signIn } from "./store/AuthAction";
+import { tempUser, UserKeys } from "./Schema/Schema";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const { auth } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  console.log({ auth });
+
+  React.useEffect(() => {
+    const unsubscribe = firebaseAuth.onAuthStateChanged(async (res) => {
+      if (res && !auth.isAuthenticated) {
+        const accessToken = res.accessToken;
+        console.log("Auto Log in ", { res });
+
+        dispatch(globalLoaderToggle());
+        const userInfo = await checkUserExist();
+        if (true) {
+          dispatch(signIn({ accessToken }));
+          navigate("/");
+        } else {
+          const { displayName, email, photoURL } = res.providerData[0];
+          const { uid } = res;
+          const tempUserInfo: tempUser = {
+            [UserKeys.uid]: uid,
+            [UserKeys.display_name]: displayName,
+            [UserKeys.email]: email,
+            [UserKeys.profile_photo]: photoURL,
+          };
+          dispatch(setTempUserInfo({ tempUserInfo }));
+          dispatch(signIn({ accessToken }));
+          navigate("/sign-in");
+        }
+        dispatch(globalLoaderToggle());
+        console.log("logged in", { res });
+      } else {
+        console.log("logout happned");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
   return (
     <div className="app">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/sign-in" element={<SignIn />} />
         <Route path="/:handler_name" element={<UserProfile />} />
       </Routes>
     </div>
   );
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
 }
-
 export default App;

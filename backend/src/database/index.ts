@@ -23,3 +23,7 @@ export const app = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount_ToUse),
 });
 export const db = getFirestore(app);
+
+export const auth = app.auth();
+
+export const firebaseAdmin = admin;

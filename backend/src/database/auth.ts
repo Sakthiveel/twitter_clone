@@ -1,23 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import { getAppCheck } from "firebase-admin/app-check";
-
+import { firebaseAdmin } from ".";
 export const authHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const appCheckToken = req.header("X-Firebase-AppCheck");
-
-  if (!appCheckToken) {
-    res.status(401);
-    return next("Unauthorized");
-  }
-
+  const idToken = req.header("X-Firebase-AppCheck");
   try {
-    const appCheckClaims = await getAppCheck().verifyToken(appCheckToken);
-    console.log("auth", { appCheckClaims });
-    return next();
-  } catch (err) {
+    const decodedToken = await firebaseAdmin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+    console.log({ uid });
+    next();
+  } catch (error) {
     res.status(401);
     return next("Unauthorized");
   }

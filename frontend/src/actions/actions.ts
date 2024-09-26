@@ -10,22 +10,42 @@ export const defaultuser: User = {
   bio: "default bio here",
 };
 // data validation should be handled before calling this function
-export const addUser = async (userInfo: FormData) => {
-  let res;
+export const addUser = async (userInfo: User): Promise<boolean> => {
+  const { error: validationError } = userSchema.validate(userInfo);
+  if (validationError) {
+    throw Error(validationError.message);
+  }
+  const userInfoToSend = new FormData();
+  for (const [key, value] of Object.entries(userInfo)) {
+    userInfoToSend.append(key, value);
+  }
+  for (const [key, value] of userInfoToSend.entries()) {
+    console.log("to backend data", { key, value });
+  }
+  let netwrokRes: Response;
   try {
-    console.log("addUser fun", { url: import.meta.env.VITE_SERVER_URL });
+    console.log("addUser fun", { userInfo });
     const requestOptions: RequestInit = {
       method: "POST",
     };
-    res = await fetch(`${import.meta.env.VITE_SERVER_URL}/v1/addUser`, {
+    netwrokRes = await fetch(`${import.meta.env.VITE_SERVER_URL}/v1/addUser`, {
       ...requestOptions,
-      body: userInfo,
+      body: userInfoToSend,
     });
-    res = await res.json();
-    console.log("add user", { res });
-    if (!res.status) throw Error("Somethign went wrong");
+    if (!netwrokRes.ok) {
+      throw new Error("Request Failed");
+    }
+    const data = await netwrokRes.json();
+    console.log("add user", { data });
+    if (!data.status) throw Error("Somethign went wrong");
+    return true;
   } catch (err) {
-    console.log({ err });
-    // throw err;
+    // dont throw the error from here , handle it properly here itself
+    console.log({ err, netwrokRes });
+    return false;
   }
+};
+
+export const checkUserExist = async (): Promise<User | null> => {
+  return defaultuser;
 };

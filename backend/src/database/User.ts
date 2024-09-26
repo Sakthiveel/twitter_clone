@@ -1,13 +1,30 @@
 import Joi from "joi";
 import { db } from ".";
 
-const schema = Joi.object({
+export const UserKeys = {
+  uid: "uid",
+  profile_photo: "profile_photo",
+  bg_photo: "bg_photo",
+  handler_name: "handler_name",
+  bio: "bio",
+  display_name: "display_name",
+  age: "age",
+  created_at: "created_at",
+  modified_at: "modified_at",
+  email: "email",
+  authType: "authType",
+} as const;
+
+export const schema = Joi.object({
   uid: Joi.string().required(),
   handler_name: Joi.string().required(),
   display_name: Joi.string().required(),
-  age: Joi.number().required(),
   created_at: Joi.date().required(),
+  age: Joi.number(),
   modified_at: Joi.date(),
+  [UserKeys.profile_photo]: Joi.any(), // todo check this
+  [UserKeys.bg_photo]: Joi.any(), // todo check this
+  [UserKeys.bio]: Joi.string(),
 });
 
 const collection_Name = "users";
@@ -23,18 +40,4 @@ export const addUser = async (userInfo) => {
 
 export const updateUser = async (userInfo) => {
   throw new Error("update user fun not handled");
-};
-
-const data = {
-  name: "Los Angeles",
-  state: "CA",
-  country: "USA",
-};
-
-// Add a new document in collection "cities" with ID 'LA'
-export const summa = async () => {
-  // Add a new document in collection "cities" with ID 'LA'
-  const res = await db.collection("cities").doc("LA").set(data);
-  console.log({ res });
-  return res;
 };
