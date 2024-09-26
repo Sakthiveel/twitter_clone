@@ -15,6 +15,18 @@ export const UserKeys = {
   authType: "authType",
 } as const;
 
+export interface User {
+  [UserKeys.uid]: string;
+  [UserKeys.handler_name]: string;
+  [UserKeys.display_name]: string;
+  [UserKeys.created_at]: Date;
+  [UserKeys.modified_at]?: Date;
+  [UserKeys.profile_photo]?: File | string | null;
+  [UserKeys.bg_photo]?: File | string | null;
+  [UserKeys.age]?: number;
+  [UserKeys.bio]?: string;
+}
+
 export const schema = Joi.object({
   uid: Joi.string().required(),
   handler_name: Joi.string().required(),
@@ -28,16 +40,24 @@ export const schema = Joi.object({
 });
 
 const collection_Name = "users";
-
+const docRef = db.collection(collection_Name);
 export const addUser = async (userInfo) => {
   console.log("addUser called", { userInfo });
   const { error } = schema.validate(userInfo);
   if (error) throw error;
   const { uid } = userInfo;
-  const docRef = db.collection(collection_Name).doc(uid);
-  return await docRef.set(userInfo);
+  return await docRef.doc(uid).set(userInfo);
 };
 
 export const updateUser = async (userInfo) => {
   throw new Error("update user fun not handled");
+};
+
+export const getUser = async (uid) => {
+  const doc = await docRef.doc(uid).get();
+  if (doc.exists) {
+    console.log("getUser", doc.data());
+    return doc.data();
+  }
+  return null;
 };

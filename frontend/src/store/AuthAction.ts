@@ -16,6 +16,8 @@ export const AuthSlice = createSlice({
       console.log("reducer", { payload, type });
       state.isAuthenticated = true;
       state.accessToken = payload.accessToken;
+      state.userInfo = payload.userInfo;
+      state.tempUserInfo = {};
       // state = {
       //   isAuthenticated: true,
       //   accessToken: payload.accessToken,

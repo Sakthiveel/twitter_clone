@@ -1,4 +1,5 @@
-import { User, userSchema } from "../Schema/Schema";
+import { NetworkCell } from "@mui/icons-material";
+import { Post, PostSchema, User, UserKeys, userSchema } from "../Schema/Schema";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultuser: User = {
   age: 12,
@@ -46,6 +47,49 @@ export const addUser = async (userInfo: User): Promise<boolean> => {
   }
 };
 
-export const checkUserExist = async (): Promise<User | null> => {
-  return defaultuser;
+export const checkUserExist = async (uid: string): Promise<User | null> => {
+  const url = new URL(
+    `${import.meta.env.VITE_SERVER_URL}/v1/check_user_exists`
+  );
+  url.searchParams.append("uid", uid);
+  let networkRes: Response;
+  try {
+    networkRes = await fetch(url);
+    if (!networkRes.ok) {
+      alert("Something went wrong , Please try again");
+      throw new Error("Networkd resquests failed");
+    }
+    const data = await networkRes.json();
+    console.log("checkUserExist", data);
+    return data.isUserExist ? data.userInfo : null;
+  } catch (err) {
+    console.log({ err, networkRes });
+    throw err;
+  }
+};
+
+// expects only valid postinfo . validate  here once , last line of defence
+export const addPost = async (postInfo: Post): Boolean => {
+  const { error } = PostSchema.validate(postInfo);
+  if (error) throw error.message;
+  const postInfoToSend = new FormData();
+
+  for (const [key, value] of Object.entries(postInfo)) {
+    postInfoToSend.append(key, value);
+  }
+
+  try {
+    const networkRes: Response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/v1/updateUser`,
+      { method: "POST", body: postInfoToSend }
+    );
+    if (!networkRes.ok) {
+      throw networkRes;
+    }
+    const data = await networkRes.json();
+    return data.status;
+  } catch (err) {
+    console.log("add post action", { err });
+    return false;
+  }
 };

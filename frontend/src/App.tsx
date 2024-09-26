@@ -8,7 +8,8 @@ import { auth as firebaseAuth } from "./Firebase";
 import { globalLoaderToggle } from "./store/Action";
 import { checkUserExist } from "./actions/actions";
 import { setTempUserInfo, signIn } from "./store/AuthAction";
-import { tempUser, UserKeys } from "./Schema/Schema";
+import { tempUser, UserKeys, userSchema } from "./Schema/Schema";
+import { object } from "joi";
 
 function App() {
   const { auth } = useSelector((state) => state);
@@ -19,26 +20,32 @@ function App() {
   React.useEffect(() => {
     const unsubscribe = firebaseAuth.onAuthStateChanged(async (res) => {
       if (res && !auth.isAuthenticated) {
-        const accessToken = res.accessToken;
+        const { accessToken, uid } = res;
         console.log("Auto Log in ", { res });
 
         dispatch(globalLoaderToggle());
-        const userInfo = await checkUserExist();
-        if (true) {
-          dispatch(signIn({ accessToken }));
-          navigate("/");
-        } else {
-          const { displayName, email, photoURL } = res.providerData[0];
-          const { uid } = res;
-          const tempUserInfo: tempUser = {
-            [UserKeys.uid]: uid,
-            [UserKeys.display_name]: displayName,
-            [UserKeys.email]: email,
-            [UserKeys.profile_photo]: photoURL,
-          };
-          dispatch(setTempUserInfo({ tempUserInfo }));
-          dispatch(signIn({ accessToken }));
-          navigate("/sign-in");
+        try {
+          const userInfo = await checkUserExist(uid);
+          console.log("App.tsx", { userInfo });
+          if (Object.keys(userInfo ?? {}).length) {
+            dispatch(signIn({ accessToken, userInfo }));
+            navigate("/");
+          } else {
+            const { displayName, email, photoURL } = res.providerData[0];
+            const { uid } = res;
+            const tempUserInfo: tempUser = {
+              [UserKeys.uid]: uid,
+              [UserKeys.display_name]: displayName,
+              [UserKeys.email]: email,
+              [UserKeys.profile_photo]: photoURL,
+            };
+            dispatch(setTempUserInfo({ tempUserInfo }));
+            dispatch(signIn({ accessToken }));
+            navigate("/sign-in");
+          }
+        } catch (err) {
+          console.log({ err });
+          alert("Something went wrong , Please try again");
         }
         dispatch(globalLoaderToggle());
         console.log("logged in", { res });

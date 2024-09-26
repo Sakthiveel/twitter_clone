@@ -25,7 +25,6 @@ export default function SignIn() {
       );
       const { displayName, email, photoURL } = userRes.user.providerData[0];
       const { uid } = userRes.user;
-      const accessToken = userRes.user.accessToken;
       const tempUserToProcess = {
         [UserKeys.display_name]: displayName,
         [UserKeys.uid]: uid,
@@ -33,7 +32,6 @@ export default function SignIn() {
         [UserKeys.profile_photo]: photoURL,
       };
       dispatch(setTempUserInfo(tempUserToProcess));
-      dispatch(signIn({ accessToken }));
     } catch (err) {
       console.log({ err });
     }
@@ -99,18 +97,9 @@ export default function SignIn() {
     }
   };
 
-  //   React.useEffect(() => {
-  //     const unsubscribe = auth.onAuthStateChanged((user) => {
-  //       if (user) {
-  //         console.log("auth change", { user });
-  //       }
-  //     });
-  //     return () => unsubscribe();
-  //   });
-
   return (
     <div>
-      {!auth.isAuthenticated ? (
+      {!tempUserInfo?.[UserKeys.uid] ? (
         <>
           <button onClick={signInHandler}>SignIn page</button>
           <button onClick={clickHandler}>click here</button>

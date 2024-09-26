@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import { addUser, updateUser } from "./src/database/User";
+import { addUser, getUser, updateUser } from "./src/database/User";
 import { addPost, updatePost } from "./src/database/Post";
 import { authHandler } from "./src/database/auth";
 import cors from "cors";
@@ -34,6 +34,15 @@ app.get("/", (req: Request, res: Response) => {
 
 app.get("/handler_name_exist", (req, res) => {
   res.send(JSON.stringify("Selena Gomez"));
+});
+
+app.get("/v1/check_user_exists", async (req: Request, res) => {
+  try {
+    const userInfo = await getUser(req.query.uid);
+    res.send(JSON.stringify({ isUserExist: Boolean(userInfo), userInfo }));
+  } catch (err) {
+    res.send({ status: false, res: err.message });
+  }
 });
 
 app.post("/v1/addUser", async (req: FileUploadRequest, res: Response) => {
