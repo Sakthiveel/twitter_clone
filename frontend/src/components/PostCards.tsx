@@ -23,15 +23,12 @@ export default function PostCards(props: PostCardsProps) {
           <div className="">.</div>
           <div className="text-base font-normal text-grey">14h</div>
         </div>
-        <div className="text-base font-normal ">
-          Post content here , can be text and video , contetne will be added
-          soon. ok cool
-        </div>
+        <div className="text-base font-normal ">{text_content}</div>
         {images.map((imgSrc) => {
           if (typeof imgSrc !== "string") {
             throw new Error("lkdfj");
           }
-          return <ImageViewer img={imgSrc} />;
+          return <ImageViewer imgSrc={imgSrc} />;
         })}
         <div className="flex justify-between">
           <HeartIcon sx={{ fontSize: "24px" }} />
@@ -44,8 +41,13 @@ export default function PostCards(props: PostCardsProps) {
   );
 }
 
-function ImageViewer(img: string) {
+function ImageViewer(props) {
+  console.log("ImageViewer", { props });
   return (
-    <img src={img} alt="Shoes" className="w-full h-fit  rounded-xl my-4" />
+    <img
+      src={props.imgSrc}
+      alt="Shoes"
+      className="w-full h-fit max-h-96 object-contain rounded-xl my-4"
+    />
   );
 }
