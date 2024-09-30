@@ -5,6 +5,8 @@ import PostCards from "../../components/PostCards";
 import { addUser } from "../../Utils";
 import Modal from "../../components/UI/Modal";
 import CreatePostModal from "./CreatePostModa";
+import { useSelector } from "react-redux";
+import { Post } from "../../Schema/Schema";
 const HomeContentNavigate = () => {
   return (
     <div className="flex py-2">
@@ -20,6 +22,10 @@ const HomeContentNavigate = () => {
 };
 
 export default function Home() {
+  const postsDataArr = useSelector(
+    (state) => state.main.app.usersPosts.postsDataArr
+  );
+  console.log("home ", { postsDataArr });
   const [img, setImage] = React.useState("");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const imageHandler = (ev: any) => {
@@ -31,7 +37,7 @@ export default function Home() {
       <CreatePostModal />
       {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
       <RightSidebar />
-      <div className="w-[400px] border border-white">
+      <div className="w-[568px] border border-white">
         <HomeContentNavigate />
         <div className="flex w-full">
           <HomeIcon sx={{ fontSize: "30px" }} />
@@ -59,7 +65,9 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <PostCards />
+        {postsDataArr.map((postInfo: Post) => (
+          <PostCards postInfo={postInfo} />
+        ))}
       </div>
     </div>
   );

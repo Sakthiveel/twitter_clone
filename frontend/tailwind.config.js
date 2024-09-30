@@ -2,8 +2,9 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    colorsk: {
+    colors: {
       defaultBC: "rgb(47, 51, 54)",
+      grey: "rgb(113, 118, 123)",
     },
     extend: {},
   },
