@@ -48,7 +48,7 @@ export const PostSchema = Joi.object({
 });
 
 const getPostCollectionRef = (created_by: string, post_id: string) =>
-  db.collection("users").doc(created_by).collection("posts").doc(post_id);
+  db.collection("posts").doc(post_id);
 
 export const addPost = async (postInfo: Post): Promise<boolean> => {
   console.log("add post ", { postInfo });

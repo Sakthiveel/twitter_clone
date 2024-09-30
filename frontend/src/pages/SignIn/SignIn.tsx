@@ -38,6 +38,7 @@ export default function SignIn() {
       };
       setTempAccessToken(accessToken);
       const userInfo: User | null = await checkUserExist(uid);
+      console.log("signINHandler", { userInfo });
       if (userInfo) {
         dispatch(signIn({ userInfo, accessToken }));
         navigate("/home");

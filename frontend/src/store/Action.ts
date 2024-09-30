@@ -34,11 +34,15 @@ export const BaseSlice = createSlice({
         throw new Error("No Post data to set the state");
       }
       console.log("redux", { data: payload.postsData });
-      const postsAsArr: Array<Post> = Object.keys(payload.postsData).map(
-        (postId) => payload.postsData?.[postId]
+      const postDataAsObj = payload.postsData.reduce(
+        (prev: object, postInfo: Post) => {
+          const { post_id } = postInfo;
+          return Object.assign(prev, { [post_id]: postInfo });
+        },
+        {}
       );
-      state.app.usersPosts.postDataAsObj = payload.postsData;
-      state.app.usersPosts.postsDataArr = postsAsArr;
+      state.app.usersPosts.postDataAsObj = postDataAsObj;
+      state.app.usersPosts.postsDataArr = payload.postsData;
     },
   },
 });

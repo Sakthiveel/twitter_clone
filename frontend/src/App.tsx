@@ -13,8 +13,15 @@ import {
   setTempUserInfo,
   signIn,
 } from "./store/AuthAction";
-import { tempUser, UserKeys } from "./Schema/Schema";
-import { doc, onSnapshot } from "firebase/firestore";
+import { Post, tempUser, UserKeys } from "./Schema/Schema";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 function App() {
   const {
@@ -29,6 +36,7 @@ function App() {
 
   React.useEffect(() => {
     const unsubscribe = firebaseAuth.onAuthStateChanged(async (res) => {
+      console.log("onAuthState change", { res });
       if (res && !auth.isAuthenticated) {
         const { accessToken, uid } = res;
         console.log("Auto Log in ", { res });
@@ -74,12 +82,17 @@ function App() {
       userListener = onSnapshot(doc(db, "users", uid), (doc) => {
         console.log("Current data: ", doc.data());
       });
-
-      postListener = onSnapshot(doc(db, "posts", uid), (doc) => {
-        if (doc.exists()) {
-          dispatch(updateUserPosts({ postsData: doc.data() }));
-        }
-        // else // might need to do something here
+      const userPostQuery = query(
+        collection(db, "posts"),
+        where("created_by", "==", auth.userInfo.uid)
+      );
+      postListener = onSnapshot(userPostQuery, (querySnapshot) => {
+        const userPosts: Array<Post> = [];
+        querySnapshot.forEach((doc) => {
+          userPosts.push(doc.data() as Post);
+        });
+        dispatch(updateUserPosts({ postsData: userPosts }));
+        console.log("Current cities in CA: ", { userPosts });
       });
     }
 
