@@ -1,5 +1,5 @@
 import React from "react";
-import { addUser, defaultuser } from "../actions/actions";
+import { addUser, defaultuser } from "../Utils";
 import { User, UserKeys, userSchema } from "../Schema/Schema";
 import { useDispatch, useSelector } from "react-redux";
 import { increment } from "../store/userAction";

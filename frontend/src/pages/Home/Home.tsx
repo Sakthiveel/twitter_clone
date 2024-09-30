@@ -2,7 +2,7 @@ import React from "react";
 import RightSidebar from "../../components/RightSidebar";
 import HomeIcon from "@mui/icons-material/HomeOutlined";
 import PostCards from "../../components/PostCards";
-import { addUser } from "../../actions/actions";
+import { addUser } from "../../Utils";
 import Modal from "../../components/UI/Modal";
 import CreatePostModal from "./CreatePostModa";
 const HomeContentNavigate = () => {

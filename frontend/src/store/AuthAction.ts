@@ -1,17 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { Post, tempUser, userSchema } from "../Schema/Schema";
+interface AuthState {
+  isAuthenticated: boolean;
+  accessToken: number | null;
+  userInfo: Post | object;
+  tempUserInfo: tempUser | object;
+}
+const initialState: AuthState = {
+  isAuthenticated: false,
+  accessToken: null,
+  userInfo: {},
+  tempUserInfo: {},
+};
 export const AuthSlice = createSlice({
   name: "auth",
-  initialState: {
-    isAuthenticated: false,
-    accessToken: null,
-    userInfo: {},
-    tempUserInfo: {},
-  },
+  initialState,
   reducers: {
     signIn: (state, { payload, type }) => {
       if (!payload.accessToken) {
         throw new Error("Access Token is need");
+      }
+      if (userSchema.validate(payload.userInfo).error) {
+        throw new Error("No valid userInfo to sign in");
       }
       console.log("reducer", { payload, type });
       state.isAuthenticated = true;
@@ -36,10 +46,10 @@ export const AuthSlice = createSlice({
     },
     setUserInfo: (state, { payload }) => {
       console.log("setUserInfo", { payload });
-      if (!payload.userInfo) {
-        throw new Error("No User Info to set redux state");
+      if (userSchema.validate(state.userInfo).error) {
+        throw new Error("Invalid user info to set");
       }
-      state.userInfo = { ...payload.userInfo };
+      state.userInfo = payload.userInfo;
     },
     setTempUserInfo: (state, { payload }) => {
       if (!payload.tempUserInfo) {
@@ -51,5 +61,6 @@ export const AuthSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { signIn, setUserInfo, setTempUserInfo } = AuthSlice.actions;
+export const { signIn, logOut, setTempUserInfo, setAccessToken } =
+  AuthSlice.actions;
 export default AuthSlice.reducer;

@@ -1,11 +1,12 @@
 import HomeIcon from "@mui/icons-material/HomeOutlined";
 import XIcon from "@mui/icons-material/X";
 import DefautlPersonIcon from "@mui/icons-material/AccountBox";
+import { logoutHandler } from "../Utils";
 
 export default function RightSidebar() {
   return (
     <div className="border flex flex-col w-[180px] gap-4">
-      <div>
+      <div onClick={logoutHandler}>
         <HomeIcon sx={{ fontSize: "50px" }} />
       </div>
       {new Array(8).fill("dummy").map(() => {

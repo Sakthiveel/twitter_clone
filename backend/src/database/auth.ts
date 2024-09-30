@@ -5,9 +5,10 @@ export const authHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  const idToken = req.header("X-Firebase-AppCheck");
+  const accessToken = req.header("Authorization");
+  console.log("authHandler", { accessToken });
   try {
-    const decodedToken = await firebaseAdmin.auth().verifyIdToken(idToken);
+    const decodedToken = await firebaseAdmin.auth().verifyIdToken(accessToken);
     const uid = decodedToken.uid;
     console.log({ uid });
     next();

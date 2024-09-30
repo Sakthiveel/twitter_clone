@@ -53,11 +53,21 @@ export const updateUser = async (userInfo) => {
   throw new Error("update user fun not handled");
 };
 
-export const getUser = async (uid) => {
+export const getUser = async (uid: string): Promise<User | null> => {
   const doc = await docRef.doc(uid).get();
   if (doc.exists) {
     console.log("getUser", doc.data());
-    return doc.data();
+    return doc.data() as User;
   }
   return null;
+};
+
+export const handlerExists = async (handler_name: string): Promise<boolean> => {
+  if (!handler_name.length) {
+    throw new Error("Invalid handler_name to check");
+  }
+  const query = docRef.where(UserKeys.handler_name, "==", handler_name);
+  const snapshot = await query.count().get();
+  console.log({ snapshot });
+  return Boolean(snapshot.data().count);
 };

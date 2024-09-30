@@ -1,9 +1,7 @@
 import { imagekit } from "../..";
 import { UploadedFile } from "express-fileupload";
 
-export const imageUploader = async (
-  file: UploadedFile
-): Promise<string | null> => {
+export const imageUploader = async (file: UploadedFile): Promise<string> => {
   try {
     const uploadRes = await imagekit.upload({
       file: file.data,
@@ -25,9 +23,10 @@ export const imageUploader = async (
         ],
       },
     });
+    console.log({ uploadRes });
     return uploadRes.url;
   } catch (err) {
     console.log("image upload", err);
-    return null;
+    throw new Error("Impage Upload Failed");
   }
 };

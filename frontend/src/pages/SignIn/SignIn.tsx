@@ -2,15 +2,20 @@ import React from "react";
 import { signInWithPopup, UserCredential } from "firebase/auth";
 import { auth as firebaseAuth, googleAuthProvider } from "../../Firebase";
 import { useDispatch, useSelector } from "react-redux";
-import { setTempUserInfo, setUserInfo, signIn } from "../../store/AuthAction";
+import { setTempUserInfo, signIn } from "../../store/AuthAction";
 import { useNavigate } from "react-router-dom";
-import { globalLoaderToggle } from "../../store/Action";
-import { addUser } from "../../actions/actions";
+import {
+  addUser,
+  checkHandlerNameAvailable,
+  checkUserExist,
+} from "../../Utils";
 import { tempUser, User, UserKeys, userSchema } from "../../Schema/Schema";
-import { uid } from "uid";
 
 export default function SignIn() {
   const [handle_name, setHandleName] = React.useState<string>("");
+  const [tempAccessToken, setTempAccessToken] = React.useState<string | null>(
+    null
+  );
   const {
     auth,
     auth: { tempUserInfo },
@@ -24,21 +29,24 @@ export default function SignIn() {
         googleAuthProvider
       );
       const { displayName, email, photoURL } = userRes.user.providerData[0];
-      const { uid } = userRes.user;
+      const { uid, accessToken } = userRes.user;
       const tempUserToProcess = {
         [UserKeys.display_name]: displayName,
         [UserKeys.uid]: uid,
         [UserKeys.email]: email,
         [UserKeys.profile_photo]: photoURL,
       };
-      dispatch(setTempUserInfo(tempUserToProcess));
+      setTempAccessToken(accessToken);
+      const userInfo: User | null = await checkUserExist(uid);
+      if (userInfo) {
+        dispatch(signIn({ userInfo, accessToken }));
+        navigate("/home");
+      } else {
+        dispatch(setTempUserInfo(tempUserToProcess));
+      }
     } catch (err) {
       console.log({ err });
     }
-  };
-
-  const clickHandler = async () => {
-    dispatch(globalLoaderToggle());
   };
 
   const getUserInfoToProcess = (): User => {
@@ -68,32 +76,30 @@ export default function SignIn() {
   };
 
   const submitHandlerName = async () => {
-    let networkRes: Response;
-
     try {
-      networkRes = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/handler_name_exist`
+      const ishandlerNameAvailable: boolean = await checkHandlerNameAvailable(
+        handle_name
       );
-      if (!networkRes.ok) {
-        throw new Error("Request Failed");
-      }
-      const data = await networkRes.json();
-      if (true) {
+      console.log({ ishandlerNameAvailable });
+      if (ishandlerNameAvailable) {
         const userInfo = getUserInfoToProcess();
         const { error } = userSchema.validate(userInfo);
         if (error) throw new Error(error.message);
-        const isUserAdded = await addUser(getUserInfoToProcess());
+        const isUserAdded = await addUser(
+          getUserInfoToProcess(),
+          auth.accessToken
+        );
         if (!isUserAdded) {
           alert("Something went wrong , Please try again");
           return;
         }
         if (isUserAdded) {
-          dispatch(setUserInfo({ userInfo }));
-          navigate("/");
+          dispatch(signIn({ userInfo, accessToken: tempUserInfo.accessToken }));
+          navigate("/home");
         }
       }
     } catch (err) {
-      console.log("submitHandlerName", { err, networkRes });
+      console.log("submitHandlerName", { err });
     }
   };
 
@@ -101,8 +107,7 @@ export default function SignIn() {
     <div>
       {!tempUserInfo?.[UserKeys.uid] ? (
         <>
-          <button onClick={signInHandler}>SignIn page</button>
-          <button onClick={clickHandler}>click here</button>
+          <button onClick={signInHandler}>Sign In With Google </button>
         </>
       ) : (
         <div>
