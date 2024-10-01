@@ -6,6 +6,8 @@ import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import LocalPostOfficeIcon from "@mui/icons-material/LocalPostOffice";
 import { Post } from "../Schema/Schema";
 import { EllipsisVertical } from "lucide-react";
+import Modal from "./UI/Modal";
+import Button from "./UI/Button";
 interface PostCardsProps {
   postInfo: Post;
 }
@@ -13,6 +15,7 @@ export default function PostCards(props: PostCardsProps) {
   const { images = [], text_content, likes_count } = props.postInfo;
   return (
     <div className="w-[568px] flex px-4 py-4">
+      <DeleteModal />
       <div className="mr-2">
         <ProfileCard />
       </div>
@@ -23,7 +26,23 @@ export default function PostCards(props: PostCardsProps) {
           <div className="text-base font-normal text-grey">handler name</div>
           <div className="">.</div>
           <div className="text-base font-normal text-grey">14h</div>
-          <EllipsisVertical className="size-4 " />
+          <details className="dropdown">
+            <summary className="">
+              <EllipsisVertical className="size-4" />
+            </summary>
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <li>
+                <a>Edit Post</a>
+              </li>
+              <li
+                onClick={() =>
+                  document.getElementById("post-delete-modal")?.showModal()
+                }
+              >
+                <a>Delete Post</a>
+              </li>
+            </ul>
+          </details>
         </div>
         <div className="text-base font-normal ">{text_content}</div>
         {images.map((imgSrc) => {
@@ -51,5 +70,24 @@ function ImageViewer(props) {
       alt="Shoes"
       className="w-full h-fit max-h-96 object-contain rounded-xl my-4"
     />
+  );
+}
+
+function DeleteModal() {
+  return (
+    <Modal modal_id="post-delete-modal" classes="">
+      <div className="text-2xl">Delete Post ?</div>
+      <div className="mt-4">
+        This can’t be undone and it will be removed from your profile, the
+        timeline of any accounts that follow you, and from search results.
+      </div>
+      <div>
+        <Button
+          btnText="Delete"
+          clickHandler={() => {}}
+          styles={{ width: "100%", marginTop: 12, backgroundColor: "red" }}
+        />
+      </div>
+    </Modal>
   );
 }
