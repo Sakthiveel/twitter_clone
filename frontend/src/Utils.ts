@@ -56,6 +56,8 @@ export const addUser = async (
   }
 };
 
+export const editUser = async () => {};
+
 export const checkUserExist = async (uid: string): Promise<User | null> => {
   const url = new URL(
     `${import.meta.env.VITE_SERVER_URL}/v1/check_user_exists`
