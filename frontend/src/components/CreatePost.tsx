@@ -1,5 +1,5 @@
 import React from "react";
-import { PostKeys, Post, PostSchema } from "../Schema/Schema";
+import { PostKeys, Post, PostSchema, UserKeys } from "../Schema/Schema";
 import { addPost } from "../Utils";
 import { uid } from "uid";
 import { useSelector } from "react-redux";
@@ -64,7 +64,7 @@ export default function CreatePost() {
   return (
     <div className="flex w-full p-4">
       <div className="mr-2">
-        <ProfileCard />
+        <ProfileCard url={userInfo?.[UserKeys.profile_photo]} />
       </div>
       <div className="flex flex-col w-full gap-1">
         <details className="dropdown">
@@ -96,18 +96,21 @@ export default function CreatePost() {
             )
           }
         ></textarea>
+
+        <div className="flex flex-col gap-2 ">
+          {previewImgs.map((imgSrc) => {
+            return (
+              <img
+                src={imgSrc}
+                className="max-h-[300px] object-contain aspect-video"
+                alt="img"
+                key={`upload_img_${imgSrc}`}
+              />
+            );
+          })}
+        </div>
         <div className="divider"></div>
-        {previewImgs.map((imgSrc) => {
-          console.log("img", { imgSrc });
-          return (
-            <img
-              src={imgSrc}
-              className="size-20"
-              alt="img"
-              key={`upload_img_${imgSrc}`}
-            />
-          );
-        })}
+
         <div className="flex justify-between">
           <div
             onClick={() =>
