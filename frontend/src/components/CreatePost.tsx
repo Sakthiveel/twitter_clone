@@ -68,7 +68,7 @@ export default function CreatePost() {
       </div>
       <div className="flex flex-col w-full gap-1">
         <details className="dropdown">
-          <summary className="text-sm flex text-mainBlue border border-grey  rounded-lg text-blue-primary w-fit px-2">
+          <summary className="text-sm flex text-mainBlue border-2 border-grey  rounded-lg text-blue-primary w-fit px-2">
             Everyone can view <ChevronDown className="size-5" />
           </summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
@@ -114,7 +114,9 @@ export default function CreatePost() {
               document.getElementById("create-post-image-upload")?.click()
             }
           >
-            <ImageUploadIcon sx={{ fontSize: "30px" }} />
+            <ImageUploadIcon
+              sx={{ fontSize: "30px", color: "rgb(29, 155, 240)" }}
+            />
             <input
               type="file"
               id="create-post-image-upload"
