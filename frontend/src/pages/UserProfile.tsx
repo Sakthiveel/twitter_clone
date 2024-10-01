@@ -6,6 +6,7 @@ import { increment } from "../store/userAction";
 import { useParams } from "react-router-dom";
 import { globalLoaderToggle } from "../store/Action";
 import Button from "../components/UI/Button";
+import ProfileCard from "../components/UI/ProfileCard";
 
 export default function UserProfile() {
   const auth = useSelector((state) => state.auth);
@@ -66,40 +67,44 @@ export default function UserProfile() {
   return (
     <div className="w-full h-full flex items-center justify-center border">
       <div className="border w-fit rounded-xl border-grey p-4">
-        <div className="text-xl font-medium mb-2">User Information:</div>
         <div className="flex flex-col w-[500px] gap-2">
-          {previewProfilePhot && (
-            <img
-              src={previewProfilePhot}
-              alt="profile_photo"
-              className="size-40"
+          <div
+            onClick={() => document.getElementById(UserKeys.bg_photo)?.click()}
+            className="w-full border border-grey h-20"
+          >
+            {previewBgPhoto ? (
+              <img
+                src={previewBgPhoto ?? ""}
+                alt={UserKeys.bg_photo}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <div>Click Here to add Background Image</div>
+            )}
+            <input
+              type="file"
+              name={UserKeys.bg_photo}
+              id={UserKeys.bg_photo}
+              accept="image/*"
+              className="hidden"
+              onChange={imageHandler}
             />
-          )}
-          {previewBgPhoto && (
-            <img
-              src={previewBgPhoto}
-              alt="background-photo"
-              className="size-40"
+          </div>
+          <div
+            onClick={() =>
+              document.getElementById(UserKeys.profile_photo)?.click()
+            }
+          >
+            <ProfileCard url={previewProfilePhot} />
+            <input
+              type="file"
+              name={UserKeys.profile_photo}
+              id={UserKeys.profile_photo}
+              accept="image/*"
+              className="hidden"
+              onChange={imageHandler}
             />
-          )}
-          <input
-            type="file"
-            name={UserKeys.bg_photo}
-            accept="image/*"
-            className="file-input file-input-bordered file-input-md w-full max-w-xs"
-            onChange={imageHandler}
-          />
-          <button onClick={() => dispatch(globalLoaderToggle())}>
-            click here{" "}
-          </button>
-          <span>{globalLoader ? "Loading" : "Not Loading"}</span>
-          <input
-            type="file"
-            name={UserKeys.profile_photo}
-            accept="image/*"
-            className="file-input file-input-bordered file-input-md w-full max-w-xs"
-            onChange={imageHandler}
-          />
+          </div>
 
           <input
             type="text"
