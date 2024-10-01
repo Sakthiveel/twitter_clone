@@ -78,3 +78,10 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+/* to remove marker from summary html compx */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}

@@ -2,6 +2,7 @@ import HomeIcon from "@mui/icons-material/HomeOutlined";
 import XIcon from "@mui/icons-material/X";
 import DefautlPersonIcon from "@mui/icons-material/AccountBox";
 import { logoutHandler } from "../Utils";
+import Button from "./UI/Button";
 
 export default function RightSidebar() {
   return (
@@ -17,7 +18,7 @@ export default function RightSidebar() {
           </div>
         );
       })}
-      <button className="btn bg-blue-500 text-white">Post</button>
+      <Button btnText="Post" clickHandler={() => {}} styles={{ padding: 8 }} />
       <div className="flex justify-between border border-white">
         <div className="flex">
           <img src="" alt="kj" className="size-10" />

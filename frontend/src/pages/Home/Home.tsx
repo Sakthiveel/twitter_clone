@@ -1,12 +1,11 @@
 import React from "react";
 import RightSidebar from "../../components/RightSidebar";
-import HomeIcon from "@mui/icons-material/HomeOutlined";
+import ProfileCard from "../../components/UI/ProfileCard";
 import PostCards from "../../components/PostCards";
-import { addUser } from "../../Utils";
-import Modal from "../../components/UI/Modal";
 import CreatePostModal from "./CreatePostModa";
 import { useSelector } from "react-redux";
 import { Post } from "../../Schema/Schema";
+import CreatePost from "../../components/CreatePost";
 const HomeContentNavigate = () => {
   return (
     <div className="flex py-2">
@@ -22,10 +21,11 @@ const HomeContentNavigate = () => {
 };
 
 export default function Home() {
-  const postsDataArr = useSelector(
-    (state) => state.main.app.usersPosts.postsDataArr
-  );
-  console.log("home ", { postsDataArr });
+  const { auth, main } = useSelector((state) => state);
+
+  const { userInfo } = auth;
+  const usersPosts = main.app.usersPosts;
+  console.log("home ", { usersPosts });
   const [img, setImage] = React.useState("");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const imageHandler = (ev: any) => {
@@ -37,35 +37,10 @@ export default function Home() {
       <CreatePostModal />
       {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
       <RightSidebar />
-      <div className="w-[568px] border border-white">
+      <div className="w-[568px] border" style={{ borderWidth: 1 }}>
         <HomeContentNavigate />
-        <div className="flex w-full">
-          <HomeIcon sx={{ fontSize: "30px" }} />
-          <div className="flex flex-col w-full">
-            <details className="dropdown">
-              <summary className="btn m-1">open or close</summary>
-              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                <li>
-                  <a>Item 1</a>
-                </li>
-                <li>
-                  <a>Item 2</a>
-                </li>
-              </ul>
-            </details>
-            <textarea className="textarea" placeholder="Bio"></textarea>
-            <div className="divider"></div>
-            <button
-              className="btn self-end bg-blue-500 text-white w-fit"
-              onClick={() =>
-                document.getElementById("create_post_modal").showModal()
-              }
-            >
-              Post
-            </button>
-          </div>
-        </div>
-        {postsDataArr.map((postInfo: Post) => (
+        <CreatePost />
+        {usersPosts.postsDataArr.map((postInfo: Post) => (
           <PostCards postInfo={postInfo} />
         ))}
       </div>

@@ -5,6 +5,7 @@ import ReplyIcon from "@mui/icons-material/Reply";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import LocalPostOfficeIcon from "@mui/icons-material/LocalPostOffice";
 import { Post } from "../Schema/Schema";
+import { EllipsisVertical } from "lucide-react";
 interface PostCardsProps {
   postInfo: Post;
 }
@@ -16,12 +17,13 @@ export default function PostCards(props: PostCardsProps) {
         <ProfileCard />
       </div>
       <div className="w-full">
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-center">
           <div className="text-base font-bold">Name hehre</div>
           <VerifiedIcon className="" />
           <div className="text-base font-normal text-grey">handler name</div>
           <div className="">.</div>
           <div className="text-base font-normal text-grey">14h</div>
+          <EllipsisVertical className="size-4 " />
         </div>
         <div className="text-base font-normal ">{text_content}</div>
         {images.map((imgSrc) => {
