@@ -26,7 +26,7 @@ export default function RightSidebar() {
   };
   return (
     <div
-      className="border flex flex-col w-[180px] gap-4"
+      className="border-x border-grey py-2 flex flex-col w-[180px] gap-4"
       style={{ position: "sticky", left: 0 }}
     >
       <div>
