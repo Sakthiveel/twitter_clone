@@ -2,7 +2,6 @@ import { ConstructionOutlined, NetworkCell } from "@mui/icons-material";
 import { Post, PostSchema, User, UserKeys, userSchema } from "./Schema/Schema";
 import { signOut } from "firebase/auth";
 import { auth } from "./Firebase";
-import { cache } from "joi";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultuser: User = {
   age: 12,
@@ -56,12 +55,50 @@ export const addUser = async (
   }
 };
 
-export const editUser = async () => {};
+export const editUser = async (
+  userInfo: User,
+  accessToken: string
+): Promise<boolean> => {
+  const { error: validationError } = userSchema.validate(userInfo);
+  if (validationError) {
+    throw Error(validationError.message);
+  }
+  const userInfoToSend = new FormData();
+  for (const [key, value] of Object.entries(userInfo)) {
+    userInfoToSend.append(key, value);
+  }
+  for (const [key, value] of userInfoToSend.entries()) {
+    console.log("to backend data", { key, value });
+  }
+  let netwrokRes: Response;
+  try {
+    console.log("editUser fun", { userInfo });
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: {
+        Authorization: `${accessToken}`,
+      },
+    };
+    netwrokRes = await fetch(`${import.meta.env.VITE_SERVER_URL}/v1/editUser`, {
+      ...requestOptions,
+      body: userInfoToSend,
+    });
+    if (!netwrokRes.ok) {
+      throw new Error("Request Failed");
+    }
+    const data = await netwrokRes.json();
+    console.log("edit user", { data });
+    if (!data.status) throw new Error("Cannot able to edit the User Info");
+    return true;
+  } catch (err) {
+    // dont throw the error from here , handle it properly here itself
+    console.log({ err, netwrokRes });
+    return false;
+  }
+};
 
 export const checkUserExist = async (uid: string): Promise<User | null> => {
-  const url = new URL(
-    `${import.meta.env.VITE_SERVER_URL}/v1/check_user_exists`
-  );
+  const url = new URL(`${import.meta.env.VITE_SERVER_URL}/check_user_exists`);
   url.searchParams.append("uid", uid);
   let networkRes: Response;
   try {
@@ -140,4 +177,20 @@ export const checkHandlerNameAvailable = async (
   }
   const { status } = await networkRes.json();
   return !status;
+};
+
+export const getUser = async (handler_name: string): Promise<User | null> => {
+  try {
+    const networkRes = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/getUser/?handler_name=${handler_name}`
+    );
+    if (!networkRes.ok) {
+      throw new Error("Network Error");
+    }
+    const data: User = await networkRes.json();
+    return data || null;
+  } catch (err) {
+    console.log("getUser", { err });
+    return null;
+  }
 };

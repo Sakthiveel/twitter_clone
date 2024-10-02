@@ -53,13 +53,34 @@ export const updateUser = async (userInfo) => {
   throw new Error("update user fun not handled");
 };
 
-export const getUser = async (uid: string): Promise<User | null> => {
-  const doc = await docRef.doc(uid).get();
-  if (doc.exists) {
-    console.log("getUser", doc.data());
-    return doc.data() as User;
+export const getUser = async (
+  uid: string | null,
+  handler_name: string | null
+): Promise<User | null> => {
+  console.log("getUser db func", { uid, handler_name });
+  if (uid) {
+    const doc = await docRef.doc(uid).get();
+    if (doc.exists) {
+      console.log("getUser", doc.data());
+      return doc.data() as User;
+    }
+    return null;
+  } else if (handler_name) {
+    const query = docRef.where(UserKeys.handler_name, "==", handler_name);
+    const snapshot = await query.limit(1).get();
+    if (snapshot.empty) {
+      console.log("No User found for the given  handler_name");
+      return null;
+    }
+    let data: User;
+    snapshot.forEach((doc) => {
+      data = doc.data() as User;
+    });
+    console.log({ data });
+    return data;
   }
-  return null;
+
+  throw new Error("Need uid or handler_name to get the User info .");
 };
 
 export const handlerExists = async (handler_name: string): Promise<boolean> => {
@@ -71,3 +92,11 @@ export const handlerExists = async (handler_name: string): Promise<boolean> => {
   console.log({ snapshot });
   return Boolean(snapshot.data().count);
 };
+
+// export const getAllUsers = async (): Promise<Array<object>> => {
+//   const snapshot = await docRef.get();
+//   const usersData = [];
+//   snapshot.forEach((doc) => usersData.push(doc.data()));
+//   console.log("getAllusers db function", { usersData });
+//   return usersData;
+// };

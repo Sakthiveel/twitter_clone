@@ -53,11 +53,22 @@ app.get("/handler_name_exist", async (req, res) => {
   }
 });
 
-app.get("/v1/check_user_exists", async (req: Request, res) => {
+app.get("/check_user_exists", async (req: Request, res) => {
   try {
     const uid = req.query.uid as string;
-    const userInfo = await getUser(uid);
+    const userInfo = await getUser(uid, null);
     res.send(JSON.stringify({ isUserExist: Boolean(userInfo), userInfo }));
+  } catch (err) {
+    res.send({ status: false, res: err.message });
+  }
+});
+
+app.get("/getUser", async (req: Request, res) => {
+  try {
+    const handler_name = req.query.handler_name as string;
+    console.log("getUser end point", { handler_name });
+    const userInfo = await getUser(null, handler_name);
+    res.send(JSON.stringify({ status: Boolean(userInfo), userInfo }));
   } catch (err) {
     res.send({ status: false, res: err.message });
   }

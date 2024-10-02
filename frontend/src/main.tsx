@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import store from "./store/index.ts";
@@ -8,11 +7,9 @@ import "./index.css";
 import { GlobalLoader } from "./components/UI/GlobalLoader.tsx";
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
-    <StrictMode>
-      <Provider store={store}>
-        <GlobalLoader />
-        <App />
-      </Provider>
-    </StrictMode>
+    <Provider store={store}>
+      <GlobalLoader />
+      <App />
+    </Provider>
   </BrowserRouter>
 );

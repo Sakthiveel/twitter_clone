@@ -1,27 +1,16 @@
-import React, { JSXElementConstructor, ReactElement, ReactNode } from "react";
+import React from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import UserProfile from "./pages/UserProfile";
 import SignIn from "./pages/SignIn/SignIn";
 import { useDispatch, useSelector } from "react-redux";
 import { db, auth as firebaseAuth } from "./Firebase";
 import { globalLoaderToggle, updateUserPosts } from "./store/Action";
 import { checkUserExist } from "./Utils";
-import {
-  logOut,
-  setAccessToken,
-  setTempUserInfo,
-  signIn,
-} from "./store/AuthAction";
+import { setTempUserInfo, setUserInfo, signIn } from "./store/AuthAction";
 import { Post, tempUser, UserKeys } from "./Schema/Schema";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import UserInfo from "./pages/settings/UserInfo";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   const {
@@ -80,6 +69,7 @@ function App() {
     let postListener = () => {};
     if (auth.isAuthenticated) {
       userListener = onSnapshot(doc(db, "users", uid), (doc) => {
+        dispatch(setUserInfo({ userInfo: doc.data() }));
         console.log("Current data: ", doc.data());
       });
       const userPostQuery = query(
@@ -113,9 +103,10 @@ function App() {
         <Route path="/home" element={<ProtectRoutes element={<Home />} />} />
         {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/sign-in" element={<SignIn />} />
+        <Route path="settings/user-info" element={<UserInfo />} />
         <Route
           path="/:handler_name"
-          element={<ProtectRoutes element={<Home />} />}
+          element={<ProtectRoutes element={<Profile />} />}
         />
       </Routes>
     </div>

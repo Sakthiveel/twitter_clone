@@ -1,22 +1,22 @@
 import React from "react";
-import { addUser, defaultuser } from "../Utils";
-import { User, UserKeys, userSchema } from "../Schema/Schema";
+import { User, UserKeys, userSchema } from "../../Schema/Schema";
 import { useDispatch, useSelector } from "react-redux";
-import { increment } from "../store/userAction";
-import { useParams } from "react-router-dom";
-import { globalLoaderToggle } from "../store/Action";
-import Button from "../components/UI/Button";
-import ProfileCard from "../components/UI/ProfileCard";
+import { useNavigate, useParams } from "react-router-dom";
+import { globalLoaderToggle } from "../../store/Action";
+import Button from "../../components/UI/Button";
+import ProfileCard from "../../components/UI/ProfileCard";
 
-export default function UserProfile() {
+export default function UserInfo() {
   const auth = useSelector((state) => state.auth);
   const [userInfo, setUserInfo] = React.useState<User>(() => auth.userInfo);
   const [previewProfilePhot, setPreviewProifilePhoto] = React.useState<
     string | null
-  >(null);
+  >(auth.userInfo?.[UserKeys.profile_photo] ?? null);
   const [previewBgPhoto, setPreviewBgPhoto] = React.useState<string | null>(
-    null
+    auth.userInfo?.[UserKeys.bg_photo] ?? null
   );
+
+  const navigate = useNavigate();
 
   const { handler_name } = useParams();
   const {
@@ -24,6 +24,12 @@ export default function UserProfile() {
   } = useSelector((state) => state);
   console.log("userProfile", { handler_name, globalLoader });
   const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    if (auth.userInfo) {
+      setUserInfo(auth.userInfo);
+    }
+  }, [auth.userInfo]);
 
   const imageHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -63,7 +69,6 @@ export default function UserProfile() {
       dispatch(globalLoaderToggle());
     }
   };
-
   return (
     <div className="w-full h-full flex items-center justify-center border">
       <div className="border w-fit rounded-xl border-grey p-4">
@@ -154,7 +159,10 @@ export default function UserProfile() {
             }
           ></textarea>
           <div className="flex justify-between">
-            <Button btnText="Back" clickHandler={() => {}} />
+            <Button
+              btnText="back to Home"
+              clickHandler={() => navigate("/home")}
+            />
             <Button btnText="Edit" clickHandler={editUserInfo} />
           </div>
         </div>
