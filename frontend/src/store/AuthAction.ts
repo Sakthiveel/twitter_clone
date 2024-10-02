@@ -42,11 +42,12 @@ export const AuthSlice = createSlice({
         isAuthenticated: false,
         accessToken: null,
         userInfo: {},
+        tempUserInfo: {},
       };
     },
     setUserInfo: (state, { payload }) => {
       console.log("setUserInfo", { payload });
-      if (userSchema.validate(state.userInfo).error) {
+      if (userSchema.validate(payload.userInfo).error) {
         throw new Error("Invalid user info to set");
       }
       state.userInfo = payload.userInfo;
@@ -61,6 +62,6 @@ export const AuthSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { signIn, logOut, setTempUserInfo, setAccessToken } =
+export const { signIn, logOut, setTempUserInfo, setUserInfo } =
   AuthSlice.actions;
 export default AuthSlice.reducer;

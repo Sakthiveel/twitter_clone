@@ -14,8 +14,14 @@ export default function CreatePost() {
   const defaultPostInfo: Post = {
     [PostKeys.text_content]: "",
     [PostKeys.images]: [],
+    [PostKeys.post_id]: "",
+    [PostKeys.created_by]: "",
+    [PostKeys.visibility]: "",
+    [PostKeys.created_at]: new Date(),
   };
-  const [postInfo, setPostInfo] = React.useState<Post>(() => defaultPostInfo);
+  const [postInfo, setPostInfo] = React.useState<Post>(() =>
+    Object.assign({}, defaultPostInfo)
+  );
   const [previewImgs, setPreviewImgs] = React.useState<Array<string>>([]);
   const { userInfo, accessToken } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -27,8 +33,10 @@ export default function CreatePost() {
     }
     if (file) {
       setPostInfo((prevSt) => {
+        const setVal = [...prevSt[PostKeys.images], file];
+        console.log({ setVal });
         return Object.assign({}, prevSt, {
-          [PostKeys.images]: [...prevSt[PostKeys.images], file],
+          [PostKeys.images]: setVal,
         });
       });
       setPreviewImgs((prevSt) => [...prevSt, URL.createObjectURL(file)]);
@@ -38,7 +46,7 @@ export default function CreatePost() {
     [PostKeys.post_id]: uid(5),
     [PostKeys.created_by]: userInfo.uid,
     [PostKeys.text_content]: postInfo?.[PostKeys.text_content],
-    [PostKeys.images]: postInfo?.[PostKeys.images],
+    [PostKeys.images]: postInfo?.[PostKeys.images] ?? ["fuck you"],
     [PostKeys.visibility]: "public", // todo : implement , visibility selector
     [PostKeys.created_at]: new Date(),
   });
@@ -46,11 +54,13 @@ export default function CreatePost() {
     dispatch(globalLoaderToggle());
     try {
       const postInfoToProcess: Post = preparePostInfo();
+      console.log({ postInfoToProcess, postInfo });
       const { error } = PostSchema.validate(postInfoToProcess);
       if (error) throw error;
       const res = await addPost(postInfoToProcess, accessToken);
       if (res) {
         console.log("Post added");
+        setPostInfo(() => Object.assign({}, defaultPostInfo));
       } else {
         console.log("Post creation failed");
       }
@@ -89,11 +99,12 @@ export default function CreatePost() {
           name={PostKeys.text_content}
           value={postInfo.text_content}
           onChange={(ev) =>
-            setPostInfo((prevSt) =>
-              Object.assign({}, prevSt, {
+            setPostInfo((prevSt) => {
+              console.log({ prevSt });
+              return Object.assign({}, prevSt, {
                 [PostKeys.text_content]: ev.target.value,
-              })
-            )
+              });
+            })
           }
         ></textarea>
 
@@ -122,6 +133,7 @@ export default function CreatePost() {
             />
             <input
               type="file"
+              accept="image/*"
               id="create-post-image-upload"
               className="hidden"
               name={PostKeys.images}

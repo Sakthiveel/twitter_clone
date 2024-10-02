@@ -1,21 +1,31 @@
 import React from "react";
 import RightSidebar from "../../components/RightSidebar";
-import ProfileCard from "../../components/UI/ProfileCard";
 import PostCards from "../../components/PostCards";
 import CreatePostModal from "./CreatePostModa";
 import { useSelector } from "react-redux";
 import { Post } from "../../Schema/Schema";
 import CreatePost from "../../components/CreatePost";
-const HomeContentNavigate = () => {
+import ListUsers from "./ListUsers";
+const HomeContentNavigate = ({ setNavigateOptions, navigateOptions }) => {
+  const selectedClasses = " pb-1 border-b-4 border-blue-primary rounded-t-full";
   return (
-    <div className="flex py-2">
-      {new Array(5).fill("").map(() => {
-        return (
-          <div className="text-lg text-gray-700 hover:bg-gray-300 px-2">
-            sldfk
-          </div>
-        );
-      })}
+    <div className="flex border border-b-grey">
+      <div
+        onClick={() => setNavigateOptions(1)}
+        className={`text-base text-grey delay-100 cursor-pointer px-[16px] py-2 ${
+          navigateOptions === 1 ? selectedClasses : ""
+        } `}
+      >
+        For you
+      </div>
+      <div
+        onClick={() => setNavigateOptions(2)}
+        className={`text-base text-grey delay-100 cursor-pointer px-[16px] py-2 ${
+          navigateOptions === 2 ? selectedClasses : ""
+        } `}
+      >
+        Discover People
+      </div>
     </div>
   );
 };
@@ -31,18 +41,34 @@ export default function Home() {
   const imageHandler = (ev: any) => {
     setImage(URL.createObjectURL(ev.target.files[0]));
   };
+  const [navigateOptions, setNavigateOptions] = React.useState(2);
+
   console.log(img);
+
+  const RenderPosts = () => {
+    return usersPosts.postsDataArr.map((postInfo: Post) => (
+      <PostCards postInfo={postInfo} />
+    ));
+  };
   return (
-    <div className="flex">
-      <CreatePostModal />
-      {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
-      <RightSidebar />
-      <div className="w-[568px] border" style={{ borderWidth: 1 }}>
-        <HomeContentNavigate />
-        <CreatePost />
-        {usersPosts.postsDataArr.map((postInfo: Post) => (
-          <PostCards postInfo={postInfo} />
-        ))}
+    <div className="w-full h-full flex justify-center ">
+      <div className="w-fit flex" style={{ position: "relative" }}>
+        <CreatePostModal />
+        {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
+        <RightSidebar />
+        <div className="w-[568px] border" style={{ borderWidth: 1 }}>
+          <HomeContentNavigate
+            setNavigateOptions={setNavigateOptions}
+            navigateOptions={navigateOptions}
+          />
+          {navigateOptions === 1 && (
+            <>
+              <CreatePost />
+              <RenderPosts />
+            </>
+          )}
+          {navigateOptions === 2 && <ListUsers />}
+        </div>
       </div>
     </div>
   );
