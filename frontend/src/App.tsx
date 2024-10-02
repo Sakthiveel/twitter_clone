@@ -76,13 +76,13 @@ function App() {
         collection(db, "posts"),
         where("created_by", "==", auth.userInfo.uid)
       );
-      postListener = onSnapshot(userPostQuery, (querySnapshot) => {
+      postListener = onSnapshot(collection(db, "posts"), (querySnapshot) => {
         const userPosts: Array<Post> = [];
         querySnapshot.forEach((doc) => {
           userPosts.push(doc.data() as Post);
         });
         dispatch(updateUserPosts({ postsData: userPosts }));
-        console.log("Current cities in CA: ", { userPosts });
+        console.log("general posts", { userPosts });
       });
     }
 
@@ -97,7 +97,7 @@ function App() {
     return auth.isAuthenticated ? element : <Navigate to={"/sign-in"} />;
   };
   return (
-    <div className="app">
+    <div className="flex w-full h-full justify-center">
       <Routes>
         <Route path="/" element={<ProtectRoutes element={<Home />} />} />
         <Route path="/home" element={<ProtectRoutes element={<Home />} />} />

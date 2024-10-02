@@ -67,7 +67,11 @@ export default function Home() {
               <RenderPosts />
             </>
           )}
-          {navigateOptions === 2 && <ListUsers />}
+          {navigateOptions === 2 && (
+            <>
+              <ListUsers />
+            </>
+          )}
         </div>
       </div>
     </div>

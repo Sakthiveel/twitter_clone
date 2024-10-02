@@ -74,7 +74,9 @@ export default function CreatePost() {
   return (
     <div className="flex w-full p-4">
       <div className="mr-2">
-        <ProfileCard url={userInfo?.[UserKeys.profile_photo]} />
+        <ProfileCard
+          url={userInfo?.[UserKeys.profile_photo] as string | null}
+        />
       </div>
       <div className="flex flex-col w-full gap-1">
         <details className="dropdown">
