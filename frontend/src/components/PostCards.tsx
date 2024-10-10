@@ -12,12 +12,13 @@ interface PostCardsProps {
   postInfo: Post;
 }
 export default function PostCards(props: PostCardsProps) {
-  const { images = [], text_content, likes_count } = props.postInfo;
+  const { images = [], text_content, likes_count, created_by } = props.postInfo;
+  console.log("kit", `${import.meta.env.VITE_IMAGE_URL}${created_by}`);
   return (
     <div className="w-[568px] flex px-4 py-4">
       <DeleteModal />
       <div className="mr-2">
-        <ProfileCard />
+        <ProfileCard url={`${import.meta.env.VITE_IMAGE_URL}${created_by}`} />
       </div>
       <div className="w-full">
         <div className="flex gap-1 items-center">
@@ -46,9 +47,8 @@ export default function PostCards(props: PostCardsProps) {
         </div>
         <div className="text-base font-normal ">{text_content}</div>
         {images.map((imgSrc) => {
-          if (typeof imgSrc !== "string") {
-            throw new Error("lkdfj");
-          }
+          if (typeof imgSrc !== "string")
+            throw new Error("Post Image Src formate invalid , not an string");
           return <ImageViewer imgSrc={imgSrc} />;
         })}
         <div className="flex justify-between">

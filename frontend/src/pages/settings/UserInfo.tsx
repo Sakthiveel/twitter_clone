@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { globalLoaderToggle } from "../../store/Action";
 import Button from "../../components/UI/Button";
 import ProfileCard from "../../components/UI/ProfileCard";
+import { addUser } from "../../Utils";
 
 export default function UserInfo() {
   const auth = useSelector((state) => state.auth);
@@ -61,7 +62,7 @@ export default function UserInfo() {
       return;
     }
     try {
-      const response = await editUserInfo(userInfo);
+      const response = await addUser(userInfo, auth.accessToken);
       console.log({ response });
     } catch (err) {
       alert(err);

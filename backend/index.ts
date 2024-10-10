@@ -80,14 +80,18 @@ app.post("/v1/addUser", async (req: FileUploadRequest, res: Response) => {
     let { profile_photo = "", bg_photo = "" } = req.files ?? {};
     console.log("end point", { files: req.files });
     if (typeof profile_photo === "object") {
-      profile_photo = await imageUploader(profile_photo);
+      profile_photo = await imageUploader(
+        profile_photo,
+        userInfo.uid,
+        "/profile_photos"
+      );
       if (!profile_photo) {
         throw new Error("Image Upload Failed");
       }
       Object.assign(userInfo, { profile_photo });
     }
     if (typeof bg_photo === "object") {
-      bg_photo = await imageUploader(bg_photo);
+      bg_photo = await imageUploader(bg_photo, userInfo.uid, "/bg_photos");
       if (!bg_photo) {
         throw new Error("Image Upload Failed");
       }
@@ -142,8 +146,8 @@ app.post(
       if (images) {
         images = Array.isArray(images) ? images : [images];
         imagesToStore = await Promise.all(
-          images.map(async (img: File) => {
-            return await imageUploader(img);
+          images.map(async (img: File, index: number) => {
+            return await imageUploader(img, `post_image_${index}`, "posts");
           })
         );
       }
