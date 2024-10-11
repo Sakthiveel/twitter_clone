@@ -1,8 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import {
+  addFollowers,
   addUser,
   getUser,
   handlerExists,
+  removeFollowers,
   updateUser,
 } from "./src/database/User";
 import { addPost, updatePost } from "./src/database/Post";
@@ -103,6 +105,40 @@ app.post("/v1/addUser", async (req: FileUploadRequest, res: Response) => {
     res.send({ status: false, res: err.message });
   }
 });
+
+app.post("/addFollowers", authHandler, async (req: Request, res: Response) => {
+  try {
+    const { addFollowersUids = [], currentUserUid } = req.body;
+    console.log("addFolloers route", {
+      addFollowersUids,
+      currentUserUid,
+      body: req.body,
+    });
+    await addFollowers(currentUserUid, addFollowersUids);
+    res.send({ status: true });
+  } catch (err) {
+    res.send({ status: false, res: err.message });
+  }
+});
+
+app.post(
+  "/removeFollowers",
+  authHandler,
+  async (req: Request, res: Response) => {
+    try {
+      const { removeFollowersUids = [], currentUserUid } = req.body;
+      console.log("removeFollowers route", {
+        removeFollowersUids,
+        currentUserUid,
+        body: req.body,
+      });
+      await removeFollowers(currentUserUid, removeFollowersUids);
+      res.send({ status: true });
+    } catch (err) {
+      res.send({ status: false, res: err.message });
+    }
+  }
+);
 
 // app.post("/upload", (req: Request, res: Response) => {
 //   // Check if files were uploaded

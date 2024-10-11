@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { db } from ".";
+import { FieldValue } from "firebase-admin/firestore";
 
 export const UserKeys = {
   uid: "uid",
@@ -40,13 +41,13 @@ export const schema = Joi.object({
 });
 
 const collection_Name = "users";
-const docRef = db.collection(collection_Name);
+const collectionRef = db.collection(collection_Name);
 export const addUser = async (userInfo) => {
   console.log("addUser called", { userInfo });
   const { error } = schema.validate(userInfo);
   if (error) throw error;
   const { uid } = userInfo;
-  return await docRef.doc(uid).set(userInfo);
+  return await collectionRef.doc(uid).set(userInfo);
 };
 
 export const updateUser = async (userInfo) => {
@@ -59,14 +60,18 @@ export const getUser = async (
 ): Promise<User | null> => {
   console.log("getUser db func", { uid, handler_name });
   if (uid) {
-    const doc = await docRef.doc(uid).get();
+    const doc = await collectionRef.doc(uid).get();
     if (doc.exists) {
       console.log("getUser", doc.data());
       return doc.data() as User;
     }
     return null;
   } else if (handler_name) {
-    const query = docRef.where(UserKeys.handler_name, "==", handler_name);
+    const query = collectionRef.where(
+      UserKeys.handler_name,
+      "==",
+      handler_name
+    );
     const snapshot = await query.limit(1).get();
     if (snapshot.empty) {
       console.log("No User found for the given  handler_name");
@@ -87,14 +92,37 @@ export const handlerExists = async (handler_name: string): Promise<boolean> => {
   if (!handler_name.length) {
     throw new Error("Invalid handler_name to check");
   }
-  const query = docRef.where(UserKeys.handler_name, "==", handler_name);
+  const query = collectionRef.where(UserKeys.handler_name, "==", handler_name);
   const snapshot = await query.count().get();
   console.log({ snapshot });
   return Boolean(snapshot.data().count);
 };
 
+export const addFollowers = async (
+  currentUserUid: string,
+  addFollowersUids: Array<string>
+) => {
+  const docRef = collectionRef.doc(currentUserUid);
+  console.log({ currentUserUid, addFollowersUids });
+  const res = await docRef.update({
+    following: FieldValue.arrayUnion(...addFollowersUids),
+  });
+  console.log({ res });
+};
+
+export const removeFollowers = async (
+  currentUserUid: string,
+  removeFollowersUids: Array<string>
+) => {
+  const docRef = collectionRef.doc(currentUserUid);
+  const res = await docRef.update({
+    following: FieldValue.arrayRemove(...removeFollowersUids),
+  });
+  console.log({ res });
+};
+
 // export const getAllUsers = async (): Promise<Array<object>> => {
-//   const snapshot = await docRef.get();
+//   const snapshot = await collectionRef.get();
 //   const usersData = [];
 //   snapshot.forEach((doc) => usersData.push(doc.data()));
 //   console.log("getAllusers db function", { usersData });

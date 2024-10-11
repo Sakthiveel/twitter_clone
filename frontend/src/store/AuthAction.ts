@@ -20,7 +20,9 @@ export const AuthSlice = createSlice({
       if (!payload.accessToken) {
         throw new Error("Access Token is need");
       }
+
       if (userSchema.validate(payload.userInfo).error) {
+        console.log(userSchema.validate(payload.userInfo).error);
         throw new Error("No valid userInfo to sign in");
       }
       console.log("reducer", { payload, type });

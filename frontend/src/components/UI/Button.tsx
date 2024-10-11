@@ -5,7 +5,7 @@ interface buttonVariants {
 interface ButtonProps {
   clickHandler(): any;
   btnText: string;
-  btnVariant: string;
+  btnVariant?: string;
   styles?: object;
   classes?: string;
 }
