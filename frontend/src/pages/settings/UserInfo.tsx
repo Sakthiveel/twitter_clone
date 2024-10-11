@@ -6,10 +6,24 @@ import { globalLoaderToggle } from "../../store/Action";
 import Button from "../../components/UI/Button";
 import ProfileCard from "../../components/UI/ProfileCard";
 import { addUser } from "../../Utils";
-
+import pick from "lodash/pick";
 export default function UserInfo() {
+  const pickUserInfo = (userInfo: User): User =>
+    pick(userInfo, [
+      UserKeys.bg_photo,
+      UserKeys.profile_photo,
+      UserKeys.display_name,
+      UserKeys.handler_name,
+      UserKeys.age,
+      UserKeys.bio,
+      UserKeys.uid,
+      UserKeys.created_at,
+    ]);
+
   const auth = useSelector((state) => state.auth);
-  const [userInfo, setUserInfo] = React.useState<User>(() => auth.userInfo);
+  const [userInfo, setUserInfo] = React.useState<User>(() =>
+    pickUserInfo(auth.userInfo)
+  );
   const [previewProfilePhot, setPreviewProifilePhoto] = React.useState<
     string | null
   >(auth.userInfo?.[UserKeys.profile_photo] ?? null);
@@ -28,7 +42,7 @@ export default function UserInfo() {
 
   React.useEffect(() => {
     if (auth.userInfo) {
-      setUserInfo(auth.userInfo);
+      setUserInfo(pickUserInfo(auth.userInfo));
     }
   }, [auth.userInfo]);
 

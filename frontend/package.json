@@ -19,6 +19,7 @@
     "autoprefixer": "^10.4.20",
     "firebase": "^10.13.2",
     "joi": "^17.13.3",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.446.0",
     "postcss": "^8.4.47",
     "react": "^18.3.1",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/lodash": "^4.17.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
