@@ -260,5 +260,3 @@ export const removeFollowers = async (
     return false;
   }
 };
-
-removeFollowers("12", ["23"], "sdf");
