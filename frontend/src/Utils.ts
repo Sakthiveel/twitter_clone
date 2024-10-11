@@ -194,3 +194,71 @@ export const getUser = async (handler_name: string): Promise<User | null> => {
     return null;
   }
 };
+
+export const addFollowers = async (
+  currentUserUid: string,
+  addFollowersUids: Array<string>,
+  accessToken: string
+) => {
+  console.log({ currentUserUid, addFollowersUids, accessToken });
+  try {
+    const networkRes = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/addFollowers`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          addFollowersUids,
+          currentUserUid,
+        }),
+        headers: {
+          Authorization: `${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!networkRes.ok) {
+      throw new Error("Network Erro");
+    }
+    const data = await networkRes.json();
+    console.log("Add followers", { data, networkRes });
+    return data?.status;
+  } catch (err) {
+    console.error("addFollowers", err.message);
+    return false;
+  }
+};
+
+export const removeFollowers = async (
+  currentUserUid: string,
+  removeFollowersUids: Array<string>,
+  accessToken: string
+) => {
+  console.log({ currentUserUid, removeFollowersUids, accessToken });
+  try {
+    const networkRes = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/removeFollowers`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          removeFollowersUids: ["2", "3"],
+          currentUserUid: "VgyRt7ht44MTQy5JnQYaqdEaPBM2",
+        }),
+        headers: {
+          Authorization: `${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!networkRes.ok) {
+      throw new Error("Network Erro");
+    }
+    const data = await networkRes.json();
+    console.log("remove followers", { data, networkRes });
+    return data?.status;
+  } catch (err) {
+    console.error("removeFollowers", err.message);
+    return false;
+  }
+};
+
+removeFollowers("12", ["23"], "sdf");
