@@ -15,7 +15,9 @@ export const UserKeys = {
   email: "email",
   authType: "authType",
   following: "following",
-  followers_count: "followers_count",
+  followers: "follwers",
+  users: "users",
+  count: "count",
 } as const;
 
 export interface User {
@@ -28,8 +30,14 @@ export interface User {
   [UserKeys.bg_photo]?: File | string | null;
   [UserKeys.age]?: number;
   [UserKeys.bio]?: string;
-  [UserKeys.following]?: Array<string>;
-  [UserKeys.followers_count]?: number;
+  [UserKeys.followers]?: {
+    [UserKeys.users]: Array<string>;
+    [UserKeys.count]: number;
+  };
+  [UserKeys.following]?: {
+    [UserKeys.users]: Array<string>;
+    [UserKeys.count]: number;
+  };
 }
 
 export const schema = Joi.object({
@@ -42,8 +50,14 @@ export const schema = Joi.object({
   [UserKeys.profile_photo]: Joi.any(), // todo check this
   [UserKeys.bg_photo]: Joi.any(), // todo check this
   [UserKeys.bio]: Joi.string(),
-  [UserKeys.following]: Joi.array<string>(),
-  [UserKeys.followers_count]: Joi.number(),
+  [UserKeys.following]: Joi.object({
+    [UserKeys.users]: Joi.array<string>(),
+    [UserKeys.count]: Joi.number(),
+  }),
+  [UserKeys.followers]: Joi.object({
+    [UserKeys.users]: Joi.array<string>(),
+    [UserKeys.count]: Joi.number(),
+  }),
 });
 
 const collection_Name = "users";
@@ -123,24 +137,35 @@ export const addFollowers = async (
         throw new Error("Some of the add to follower list users not exist");
       }
     }
+    const usersFollwersList = []; // stores the actually following people uids
     db.runTransaction(async (trans) => {
       for (const followerdUid of addFollowersUids) {
         const followerRef = collectionRef.doc(followerdUid);
-        const followerDocRef = await followerRef.get();
-        const followerDoc = followerDocRef.data();
-        if (followerDoc?.[UserKeys.followers_count]) {
-          trans.update(followerRef, {
-            [UserKeys.followers_count]: FieldValue.increment(1),
-          });
-        } else {
-          trans.set(followerRef, {
-            [UserKeys.followers_count]: 1, // first time setting the value here
-          });
+        const followersDoc = (await followerRef.get()).data();
+        const followersObj = followersDoc?.[UserKeys.followers] || {};
+        if (
+          followersObj &&
+          Array.isArray(followersObj?.[UserKeys.users]) &&
+          followersObj?.[UserKeys.users].includes(currentUserUid)
+        ) {
+          break;
         }
+        trans.update(followerRef, {
+          [UserKeys.followers]: {
+            [UserKeys.count]: FieldValue.increment(1),
+            [UserKeys.users]: FieldValue.arrayUnion(currentUserUid),
+          },
+        });
+        usersFollwersList.push(followerdUid);
       }
-      trans.update(collectionRef.doc(currentUserUid), {
-        [UserKeys.following]: FieldValue.arrayUnion(...addFollowersUids),
-      });
+      if (usersFollwersList.length) {
+        trans.update(collectionRef.doc(currentUserUid), {
+          [UserKeys.following]: {
+            [UserKeys.count]: FieldValue.increment(usersFollwersList.length),
+            [UserKeys.users]: FieldValue.arrayUnion(...usersFollwersList),
+          },
+        });
+      }
       return true;
     });
   } catch (err) {
