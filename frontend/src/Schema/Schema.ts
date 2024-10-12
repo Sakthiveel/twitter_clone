@@ -18,6 +18,7 @@ export const UserKeys = {
   email: "email",
   authType: "authType",
   following: "following",
+  followers_count: "followers_count",
 } as const;
 export interface tempUser {
   [UserKeys.uid]: string;
@@ -37,6 +38,7 @@ export interface User {
   [UserKeys.age]?: number;
   [UserKeys.bio]?: string;
   [UserKeys.following]?: Array<string>;
+  [UserKeys.followers_count]?: number;
 }
 
 export const userSchema = Joi.object({
@@ -50,6 +52,7 @@ export const userSchema = Joi.object({
   [UserKeys.bg_photo]: Joi.any(), // todo check this
   [UserKeys.bio]: Joi.string(),
   [UserKeys.following]: Joi.array<string>(),
+  [UserKeys.followers_count]: Joi.number(),
 });
 
 export const PostKeys = {
