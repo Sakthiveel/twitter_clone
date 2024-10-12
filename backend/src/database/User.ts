@@ -15,6 +15,7 @@ export const UserKeys = {
   email: "email",
   authType: "authType",
   following: "following",
+  followers_count: "followers_count",
 } as const;
 
 export interface User {
@@ -27,7 +28,8 @@ export interface User {
   [UserKeys.bg_photo]?: File | string | null;
   [UserKeys.age]?: number;
   [UserKeys.bio]?: string;
-  [UserKeys.following]?: string;
+  [UserKeys.following]?: Array<string>;
+  [UserKeys.followers_count]?: number;
 }
 
 export const schema = Joi.object({
@@ -41,6 +43,7 @@ export const schema = Joi.object({
   [UserKeys.bg_photo]: Joi.any(), // todo check this
   [UserKeys.bio]: Joi.string(),
   [UserKeys.following]: Joi.array<string>(),
+  [UserKeys.followers_count]: Joi.number(),
 });
 
 const collection_Name = "users";
@@ -108,13 +111,42 @@ export const handlerExists = async (handler_name: string): Promise<boolean> => {
 export const addFollowers = async (
   currentUserUid: string,
   addFollowersUids: Array<string>
-) => {
-  const docRef = collectionRef.doc(currentUserUid);
-  console.log({ currentUserUid, addFollowersUids });
-  const res = await docRef.update({
-    following: FieldValue.arrayUnion(...addFollowersUids),
-  });
-  console.log({ res });
+): Promise<boolean> => {
+  try {
+    const currentUserRef = await collectionRef.doc(currentUserUid).get();
+    if (!currentUserRef.exists) {
+      throw new Error("User does not exists");
+    }
+    for (const followerUid of addFollowersUids) {
+      const followerDoc = await collectionRef.doc(followerUid).get();
+      if (!followerDoc.exists) {
+        throw new Error("Some of the add to follower list users not exist");
+      }
+    }
+    db.runTransaction(async (trans) => {
+      for (const followerdUid of addFollowersUids) {
+        const followerRef = collectionRef.doc(followerdUid);
+        const followerDocRef = await followerRef.get();
+        const followerDoc = followerDocRef.data();
+        if (followerDoc?.[UserKeys.followers_count]) {
+          trans.update(followerRef, {
+            [UserKeys.followers_count]: FieldValue.increment(1),
+          });
+        } else {
+          trans.set(followerRef, {
+            [UserKeys.followers_count]: 1, // first time setting the value here
+          });
+        }
+      }
+      trans.update(collectionRef.doc(currentUserUid), {
+        [UserKeys.following]: FieldValue.arrayUnion(...addFollowersUids),
+      });
+      return true;
+    });
+  } catch (err) {
+    console.error("transation failed", err);
+    return false;
+  }
 };
 
 export const removeFollowers = async (
