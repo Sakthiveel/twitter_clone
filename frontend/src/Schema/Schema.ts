@@ -18,7 +18,9 @@ export const UserKeys = {
   email: "email",
   authType: "authType",
   following: "following",
-  followers_count: "followers_count",
+  followers: "follwers",
+  users: "users",
+  count: "count",
 } as const;
 export interface tempUser {
   [UserKeys.uid]: string;
@@ -37,8 +39,14 @@ export interface User {
   [UserKeys.bg_photo]?: File | string | null;
   [UserKeys.age]?: number;
   [UserKeys.bio]?: string;
-  [UserKeys.following]?: Array<string>;
-  [UserKeys.followers_count]?: number;
+  [UserKeys.followers]?: {
+    [UserKeys.users]: Array<string>;
+    [UserKeys.count]: number;
+  };
+  [UserKeys.following]?: {
+    [UserKeys.users]: Array<string>;
+    [UserKeys.count]: number;
+  };
 }
 
 export const userSchema = Joi.object({
@@ -51,8 +59,14 @@ export const userSchema = Joi.object({
   [UserKeys.profile_photo]: Joi.any(), // todo check this
   [UserKeys.bg_photo]: Joi.any(), // todo check this
   [UserKeys.bio]: Joi.string(),
-  [UserKeys.following]: Joi.array<string>(),
-  [UserKeys.followers_count]: Joi.number(),
+  [UserKeys.following]: Joi.object({
+    [UserKeys.users]: Joi.array<string>(),
+    [UserKeys.count]: Joi.number(),
+  }),
+  [UserKeys.followers]: Joi.object({
+    [UserKeys.users]: Joi.array<string>(),
+    [UserKeys.count]: Joi.number(),
+  }),
 });
 
 export const PostKeys = {
