@@ -4,10 +4,14 @@ import Home from "./pages/Home/Home";
 import SignIn from "./pages/SignIn/SignIn";
 import { useDispatch, useSelector } from "react-redux";
 import { db, auth as firebaseAuth } from "./Firebase";
-import { globalLoaderToggle, updateUserPosts } from "./store/Action";
+import {
+  globalLoaderToggle,
+  updateFollowing,
+  updateUserPosts,
+} from "./store/Action";
 import { checkUserExist } from "./Utils";
 import { setTempUserInfo, setUserInfo, signIn } from "./store/AuthAction";
-import { Post, tempUser, UserKeys } from "./Schema/Schema";
+import { Following, Post, tempUser, UserKeys } from "./Schema/Schema";
 import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
 import UserInfo from "./pages/settings/UserInfo";
 import Profile from "./pages/Profile/Profile";
@@ -85,9 +89,12 @@ function App() {
       followingListener = onSnapshot(
         collection(db, "users", uid, "following"),
         (querySnapshot) => {
+          const followers: Array<Following> = [];
           querySnapshot.forEach((doc) => {
-            console.log("following", doc.data());
+            followers.push(doc.data() as Following);
           });
+          console.log("following listener", followers);
+          dispatch(updateFollowing(followers));
         },
         (error) => console.log("following listener Error", error)
       );

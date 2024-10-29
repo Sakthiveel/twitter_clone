@@ -111,3 +111,8 @@ export const PostSchema = Joi.object({
     PostVisibilityKeys.only_followers
   ),
 });
+
+export interface Following {
+  [UserKeys.uid]: string;
+  [UserKeys.created_at]: Date;
+}
