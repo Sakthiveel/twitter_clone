@@ -8,8 +8,10 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import { useDispatch } from "react-redux";
-import { globalLoaderToggle } from "../../store/Action";
-import { addFollowers } from "../../Utils";
+import { globalLoaderToggle, updateUsersList } from "../../store/Action";
+import { addFollowing, removeFollowing } from "../../Utils";
+import isEqual from "lodash/isEqual";
+import { StarRateTwoTone } from "@mui/icons-material";
 
 interface UserCard {
   [UserKeys.display_name]: string;
@@ -22,28 +24,48 @@ interface UserCard {
 //   usersList: Array<UserCard>;
 // }
 export default function ListUsers() {
-  const { userInfo: loggedInUserInfo, accessToken } = useSelector(
-    (state) => state.auth
+  const loggedInUserInfo = useSelector((state) => state.auth.userInfo);
+  const accessToken = useSelector((state) => state.auth.accessToken);
+  const usersList = useSelector(
+    (state) => state.main.app.newUsers.newUsersDataArr
   );
-  const [usersList, setUsersList] = React.useState<Array<User>>(() => []);
+  console.log("ListUsers");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   React.useEffect(() => {
     const listener = onSnapshot(collection(db, "users"), (snapshot) => {
-      const users: Array<User> = [];
-      snapshot.docs.forEach((doc) => users.push(doc.data() as User));
-      setUsersList(() => users);
+      const usersListToSet: Array<User> = [];
+      snapshot.docs.forEach((doc) => usersListToSet.push(doc.data() as User));
+      console.log("listUsers", { usersList, usersListToSet });
+      if (!isEqual(usersList, usersListToSet)) {
+        dispatch(updateUsersList({ usersList: usersListToSet }));
+      }
     });
     return () => {
       listener();
     };
   }, []);
-  const handleAddFollowers = async (uid: string) => {
+  const handleAddFollowing = async (uid: string) => {
     dispatch(globalLoaderToggle());
     try {
-      await addFollowers(loggedInUserInfo?.[UserKeys.uid], [uid], accessToken);
+      await addFollowing(loggedInUserInfo?.[UserKeys.uid], [uid], accessToken);
     } catch (err) {
       console.log("add followers ", err.message);
+    } finally {
+      dispatch(globalLoaderToggle());
+    }
+  };
+
+  const handleRemoveFollowing = async (uid: string) => {
+    dispatch(globalLoaderToggle());
+    try {
+      await removeFollowing(
+        loggedInUserInfo?.[UserKeys.uid],
+        [uid],
+        accessToken
+      );
+    } catch (err) {
+      console.log("handleRemoveFollowing", err.message);
     } finally {
       dispatch(globalLoaderToggle());
     }
@@ -59,7 +81,9 @@ export default function ListUsers() {
             userInfo={userInfo}
             key={`userCard_${userInfo.uid}`}
             navigate={navigate}
-            handleAddFollowers={handleAddFollowers}
+            handleAddFollowing={handleAddFollowing}
+            handleRemoveFollowing={handleRemoveFollowing}
+            isFollowing={false}
           />
         );
       })}
@@ -70,11 +94,21 @@ export default function ListUsers() {
 interface UserCardProps {
   userInfo: User;
   navigate: unknown;
-  handleAddFollowers: unknown;
+  handleAddFollowing(uid: string): void;
+  handleRemoveFollowing(uid: string): void;
+  isFollowing: boolean;
 }
 function UserCard(props: UserCardProps) {
-  const { userInfo, navigate, handleAddFollowers } = props;
+  const {
+    userInfo,
+    navigate,
+    handleAddFollowing,
+    handleRemoveFollowing,
+    isFollowing = true,
+  } = props;
   console.log("UserCAred", { userInfo });
+  const [showUnFollowBtn, setShowUnFollowBtn] = React.useState<boolean>(false);
+
   return (
     <div className="p-4 pb-0 flex justify-between items-center">
       <div className="flex gap-2 items-start">
@@ -93,10 +127,25 @@ function UserCard(props: UserCardProps) {
         </div>
       </div>
       <div className="flex gap-4 items-center">
-        <Button
-          btnText="follow"
-          clickHandler={() => handleAddFollowers(userInfo?.[UserKeys.uid])}
-        />
+        <div
+          className=""
+          onMouseEnter={() => isFollowing && setShowUnFollowBtn(true)}
+          onMouseLeave={() => isFollowing && setShowUnFollowBtn(false)}
+        >
+          {!showUnFollowBtn ? (
+            <Button
+              btnText="follow"
+              clickHandler={() => handleAddFollowing(userInfo?.[UserKeys.uid])}
+            />
+          ) : (
+            <Button
+              btnText="Unfollow"
+              clickHandler={() =>
+                handleRemoveFollowing(userInfo?.[UserKeys.uid])
+              }
+            />
+          )}
+        </div>
         <Ellipsis className="text-grey" />
       </div>
     </div>
