@@ -32,9 +32,9 @@ export default function RightSidebar() {
       <div>
         <HomeIcon sx={{ fontSize: "50px" }} />
       </div>
-      {new Array(7).fill("dummy").map(() => {
+      {new Array(7).fill("dummy").map((val, index) => {
         return (
-          <div className="flex items-center">
+          <div className="flex items-center" key={`right_sidebar_${index}`}>
             <HomeIcon sx={{ fontSize: "34px" }} />
             <div>Home</div>
           </div>
