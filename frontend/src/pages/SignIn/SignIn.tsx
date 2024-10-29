@@ -16,10 +16,8 @@ export default function SignIn() {
   const [tempAccessToken, setTempAccessToken] = React.useState<string | null>(
     null
   );
-  const {
-    auth,
-    auth: { tempUserInfo },
-  } = useSelector((state) => state);
+  const auth = useSelector((state) => state.auth);
+  const tempUserInfo = useSelector((state) => state.tempUserInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const signInHandler = async () => {

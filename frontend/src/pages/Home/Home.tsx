@@ -31,7 +31,8 @@ const HomeContentNavigate = ({ setNavigateOptions, navigateOptions }) => {
 };
 
 export default function Home() {
-  const { auth, main } = useSelector((state) => state);
+  const auth = useSelector((state) => state.auth);
+  const main = useSelector((state) => state.main);
 
   const { userInfo } = auth;
   const usersPosts = main.app.usersPosts;

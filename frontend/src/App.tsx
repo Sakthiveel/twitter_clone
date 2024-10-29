@@ -13,12 +13,8 @@ import UserInfo from "./pages/settings/UserInfo";
 import Profile from "./pages/Profile/Profile";
 
 function App() {
-  const {
-    auth,
-    auth: {
-      userInfo: { uid },
-    },
-  } = useSelector((state) => state);
+  const auth = useSelector((state) => state.auth);
+  const uid = useSelector((state) => state.auth.userInfo.uid);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   console.log({ auth });
@@ -67,6 +63,7 @@ function App() {
   React.useEffect(() => {
     let userListener = () => {};
     let postListener = () => {};
+    let followingListener = () => {};
     if (auth.isAuthenticated) {
       userListener = onSnapshot(doc(db, "users", uid), (doc) => {
         dispatch(setUserInfo({ userInfo: doc.data() }));
@@ -84,12 +81,23 @@ function App() {
         dispatch(updateUserPosts({ postsData: userPosts }));
         console.log("general posts", { userPosts });
       });
+
+      followingListener = onSnapshot(
+        collection(db, "users", uid, "following"),
+        (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            console.log("following", doc.data());
+          });
+        },
+        (error) => console.log("following listener Error", error)
+      );
     }
 
     return () => {
       // removing listeners
       userListener();
       postListener();
+      followingListener();
     };
   }, [auth.isAuthenticated]);
 
