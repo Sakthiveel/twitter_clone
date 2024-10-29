@@ -15,11 +15,12 @@ export default function Button(btnProps: ButtonProps) {
     fill: "border-none p-1 px-4 h-fit bg-blue-primary bg-slate-300 text-base hover:bg-blue-hover delay-100 ",
     outline: "border-grey hover:bg-slate-100",
   };
+  const { classes = "" } = btnProps;
   return (
     <button
       className={`${buttonVariants.base} ${
         buttonVariants?.[btnProps.btnVariant ?? "fill"]
-      }`}
+      } ${classes}`}
       onClick={btnProps.clickHandler}
       style={btnProps.styles}
     >

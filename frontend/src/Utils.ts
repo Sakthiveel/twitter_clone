@@ -195,19 +195,19 @@ export const getUser = async (handler_name: string): Promise<User | null> => {
   }
 };
 
-export const addFollowers = async (
+export const addFollowing = async (
   currentUserUid: string,
-  addFollowersUids: Array<string>,
+  addFollowingUids: Array<string>,
   accessToken: string
 ) => {
-  console.log({ currentUserUid, addFollowersUids, accessToken });
+  console.log({ currentUserUid, addFollowingUids, accessToken });
   try {
     const networkRes = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/addFollowers`,
+      `${import.meta.env.VITE_SERVER_URL}/addFollowing`,
       {
         method: "POST",
         body: JSON.stringify({
-          addFollowersUids,
+          addFollowingUids,
           currentUserUid,
         }),
         headers: {
@@ -228,20 +228,24 @@ export const addFollowers = async (
   }
 };
 
-export const removeFollowers = async (
+export const removeFollowing = async (
   currentUserUid: string,
-  removeFollowersUids: Array<string>,
+  removeFollowingUids: Array<string>,
   accessToken: string
 ) => {
-  console.log({ currentUserUid, removeFollowersUids, accessToken });
+  console.log("removeFollowing", {
+    currentUserUid,
+    removeFollowingUids,
+    accessToken,
+  });
   try {
     const networkRes = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/removeFollowers`,
+      `${import.meta.env.VITE_SERVER_URL}/removeFollowing`,
       {
         method: "POST",
         body: JSON.stringify({
-          removeFollowersUids: ["2", "3"],
-          currentUserUid: "VgyRt7ht44MTQy5JnQYaqdEaPBM2",
+          removeFollowingUids,
+          currentUserUid,
         }),
         headers: {
           Authorization: `${accessToken}`,

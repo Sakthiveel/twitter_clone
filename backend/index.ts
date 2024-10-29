@@ -1,10 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
 import {
   addFollowers,
+  addFollowing,
   addUser,
   getUser,
   handlerExists,
   removeFollowers,
+  removeFollowing,
   updateUser,
 } from "./src/database/User";
 import { addPost, updatePost } from "./src/database/Post";
@@ -106,20 +108,45 @@ app.post("/v1/addUser", async (req: FileUploadRequest, res: Response) => {
   }
 });
 
-app.post("/addFollowers", authHandler, async (req: Request, res: Response) => {
+app.post("/addFollowing", authHandler, async (req: Request, res: Response) => {
   try {
-    const { addFollowersUids = [], currentUserUid } = req.body;
+    const { addFollowingUids = [], currentUserUid } = req.body;
     console.log("addFolloers route", {
-      addFollowersUids,
+      addFollowingUids,
       currentUserUid,
       body: req.body,
     });
-    await addFollowers(currentUserUid, addFollowersUids);
+    await addFollowing({
+      currentUserId: currentUserUid,
+      followingUIds: addFollowingUids,
+    });
     res.send({ status: true });
   } catch (err) {
     res.send({ status: false, res: err.message });
   }
 });
+
+app.post(
+  "/removeFollowing",
+  authHandler,
+  async (req: Request, res: Response) => {
+    try {
+      const { removeFollowingUids = [], currentUserUid } = req.body;
+      console.log("removeFollowing route", {
+        removeFollowingUids,
+        currentUserUid,
+        body: req.body,
+      });
+      await removeFollowing({
+        currentUserUid,
+        removeFollowingUids,
+      });
+      res.send({ status: true });
+    } catch (err) {
+      res.send({ status: false, res: err.message });
+    }
+  }
+);
 
 app.post(
   "/removeFollowers",

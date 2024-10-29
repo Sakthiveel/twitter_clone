@@ -174,6 +174,73 @@ export const addFollowers = async (
   }
 };
 
+export const addFollowing = async (props: {
+  currentUserId: string;
+  followingUIds: Array<string>;
+}): Promise<boolean> => {
+  console.log("add following ", { ...props });
+  const { followingUIds, currentUserId } = props;
+  if (!followingUIds.length) {
+    throw new Error("fuck me in my ass");
+  }
+  const userDocRef = collectionRef.doc(currentUserId);
+  const followingCollection = userDocRef.collection("following");
+
+  try {
+    db.runTransaction(async (trans) => {
+      followingUIds.forEach((followId) => {
+        trans.set(followingCollection.doc(followId), {
+          uid: followId,
+          created_at: new Date(),
+        });
+        trans.set(
+          collectionRef
+            .doc(followId)
+            .collection("followers")
+            .doc(currentUserId),
+          {
+            uid: currentUserId,
+            created_at: new Date(),
+          }
+        );
+      });
+    });
+  } catch (err) {
+    return false;
+  }
+  return true;
+};
+
+export async function removeFollowing(props: {
+  currentUserUid: string;
+  removeFollowingUids: Array<string>;
+}): Promise<boolean> {
+  const { currentUserUid, removeFollowingUids } = props;
+  const userDocRef = collectionRef.doc(currentUserUid);
+  const followingCollection = userDocRef.collection("following");
+  try {
+    await db.runTransaction(async (trans) => {
+      removeFollowingUids.forEach((follwingId) => {
+        trans.delete(followingCollection.doc(follwingId));
+        trans.delete(
+          collectionRef
+            .doc(follwingId)
+            .collection("followers")
+            .doc(currentUserUid)
+        );
+      });
+    });
+  } catch (err) {
+    return false;
+  }
+  return true;
+}
+
+// removeFollowing({
+//   currentUserUid: "0SXDvH2i37d6U2tzVasRTDDopZe2",
+//   removeFollowingUids: ["new1", "new2"],
+// });
+
 export const removeFollowers = async (
   currentUserUid: string,
   removeFollowersUids: Array<string>
