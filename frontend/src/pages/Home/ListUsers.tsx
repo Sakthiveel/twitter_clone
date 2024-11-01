@@ -52,6 +52,7 @@ export default function ListUsers() {
     } catch (err) {
       console.log("add followers ", err.message);
     } finally {
+      dispatch(updateUsersList({ usersList }));
       dispatch(globalLoaderToggle());
     }
   };
