@@ -7,7 +7,7 @@ import { Post } from "../../Schema/Schema";
 import CreatePost from "../../components/CreatePost";
 import ListUsers from "./ListUsers";
 const HomeContentNavigate = ({ setNavigateOptions, navigateOptions }) => {
-  const selectedClasses = " pb-1 border-b-4 border-blue-primary rounded-t-full";
+  const selectedClasses = "pb-1 border-b-4 border-blue-primary rounded-t-full";
   return (
     <div className="flex border border-b-grey">
       <div
@@ -52,12 +52,12 @@ export default function Home() {
     ));
   };
   return (
-    <div className="w-full h-full flex justify-center ">
-      <div className="w-fit flex" style={{ position: "relative" }}>
+    <div className="w-full h-full flex justify-center border">
+      <div className=" w-[100%] flex" style={{ position: "relative" }}>
         <CreatePostModal />
         {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
         <RightSidebar />
-        <div className="w-[568px] border" style={{ borderWidth: 1 }}>
+        <div className="w-[100%] border" style={{ borderWidth: 1 }}>
           <HomeContentNavigate
             setNavigateOptions={setNavigateOptions}
             navigateOptions={navigateOptions}

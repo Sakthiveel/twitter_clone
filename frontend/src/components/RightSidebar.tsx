@@ -26,39 +26,51 @@ export default function RightSidebar() {
   };
   return (
     <div
-      className="border-x border-grey py-2 flex flex-col w-[180px] gap-4"
+      className="border-x border-grey py-2 flex flex-col w-[280px]"
       style={{ position: "sticky", left: 0 }}
     >
-      <div>
-        <HomeIcon sx={{ fontSize: "50px" }} />
+      <div className="pl-1">
+        <HomeIcon sx={{ fontSize: "44px" }} />
       </div>
       {new Array(7).fill("dummy").map((val, index) => {
         return (
-          <div className="flex items-center" key={`right_sidebar_${index}`}>
+          <div
+            className="flex items-center gap-2 cursor-pointer hover:bg-grey hover:delay-75 py-4 pl-2 "
+            key={`right_sidebar_${index}`}
+          >
             <HomeIcon sx={{ fontSize: "34px" }} />
             <div>Home</div>
           </div>
         );
       })}
       <div
-        className="flex items-end cursor-pointer"
+        className="flex items-center gap-2 cursor-pointer mb-4 py-4 pl-2 hover:bg-grey delay-75"
         onClick={() => navigate("/sdf")}
       >
-        <User className="size-7 " />
+        <User className="size-[34px] " />
         <div>Profile</div>
       </div>
-      <Button btnText="Post" clickHandler={() => {}} styles={{ padding: 8 }} />
-      <div className="flex justify-between border border-white ">
-        <div className="flex">
-          <img src="" alt="kj" className="size-10" />
-          <div>
-            <div>Sakthi vel</div>
-            <div>@shakthi_v2</div>
+      <div className="flex justify-center">
+        <Button
+          btnText="Post"
+          clickHandler={() => {}}
+          styles={{ padding: 8 }}
+          classes="w-[90%]"
+        />
+      </div>
+      <div className="flex justify-between my-4 pl-2">
+        <div className="flex gap-2">
+          <img src="" alt="profile_photo" className="size-10" />
+          <div className="">
+            <div className="text-norml font-normal leading-5">Sakthi vel</div>
+            <div className="text-sm text-grey font-normal leading-4">
+              @shakthi_v2
+            </div>
           </div>
         </div>
         <details className="dropdown">
           <summary className="">
-            <EllipsisVertical className="size-4" />
+            <EllipsisVertical className="size-[22px]" />
           </summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
             <li onClick={handleLogOut}>

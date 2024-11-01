@@ -78,9 +78,9 @@ export default function CreatePost() {
           url={userInfo?.[UserKeys.profile_photo] as string | null}
         />
       </div>
-      <div className="flex flex-col w-full gap-1">
+      <div className="flex flex-col w-full gap-2">
         <details className="dropdown">
-          <summary className="text-sm flex text-mainBlue border-2 border-grey  rounded-lg text-blue-primary w-fit px-2">
+          <summary className="text-sm font-semibold flex text-mainBlue border-2 border-grey  rounded-lg text-blue-primary w-fit px-2">
             Everyone can view <ChevronDown className="size-5" />
           </summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
@@ -96,7 +96,7 @@ export default function CreatePost() {
           </ul>
         </details>
         <textarea
-          className="font-xl font-normal px-2 rounded-xl"
+          className="font-xl font-normal p-2 rounded-xl focus:outline-none"
           placeholder="What's happening ?"
           name={PostKeys.text_content}
           value={postInfo.text_content}
