@@ -24,12 +24,6 @@ export default function Dropdown<T>(props: {
     const body = document.body as HTMLBodyElement;
 
     const handleClickOutside = (ev: MouseEvent) => {
-      // Check if the click target is outside the dropdown and the dropdown is visible
-      console.log({
-        target: ev.target,
-        dropDownRef: dropDownRef.current,
-        bool: dropDownRef.current?.contains(ev.target as Node),
-      });
       if (
         dropDownRef.current &&
         !dropDownRef.current.contains(ev.target as Node)
@@ -39,16 +33,13 @@ export default function Dropdown<T>(props: {
     };
 
     if (isDropdownVisible) {
-      // Attach event listener only when the dropdown is visible
       body.addEventListener("click", handleClickOutside);
     }
 
     return () => {
-      // Clean up: Remove the event listener if dropdown is closed or on unmount
       body.removeEventListener("click", handleClickOutside);
     };
   }, [isDropdownVisible]);
-  console.log({ isDropdownVisible });
   return (
     <div className="relative" ref={dropDownRef}>
       <div>
