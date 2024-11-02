@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { logOut } from "../store/AuthAction";
 import { globalLoaderToggle } from "../store/Action";
 import { useNavigate } from "react-router-dom";
-import Dropdown, { DropDownItem } from "./UI/DropDown";
+import Dropdown, { DropDownIconProps, DropDownItem } from "./UI/DropDown";
 
 export default function RightSidebar() {
   const dispatch = useDispatch();
@@ -86,6 +86,7 @@ export default function RightSidebar() {
   );
 }
 
-const EllipsisIcon = () => {
-  return <EllipsisVertical className="size-[22px]" />;
+const EllipsisIcon = (props: DropDownIconProps) => {
+  const { onClickHandler } = props;
+  return <EllipsisVertical className="size-[22px]" onClick={onClickHandler} />;
 };

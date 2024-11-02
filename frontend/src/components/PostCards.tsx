@@ -8,12 +8,21 @@ import { Post } from "../Schema/Schema";
 import { EllipsisVertical } from "lucide-react";
 import Modal from "./UI/Modal";
 import Button from "./UI/Button";
+import Dropdown, { DropDownIconProps, DropDownItem } from "./UI/DropDown";
 interface PostCardsProps {
   postInfo: Post;
 }
+const EllipsisIcon = (props: DropDownIconProps) => {
+  const { onClickHandler } = props;
+  return <EllipsisVertical className="size-4" onClick={onClickHandler} />;
+};
 export default function PostCards(props: PostCardsProps) {
   const { images = [], text_content, likes_count, created_by } = props.postInfo;
   console.log("kit", `${import.meta.env.VITE_IMAGE_URL}${created_by}`);
+  const dropDownItems: Array<DropDownItem> = [
+    { displayText: "Edit Post", onClickHandler: () => {} },
+    { displayText: "Delete Post", onClickHandler: () => {} },
+  ];
   return (
     <div className="w-[568px] flex px-4 py-4">
       <DeleteModal />
@@ -27,23 +36,11 @@ export default function PostCards(props: PostCardsProps) {
           <div className="text-base font-normal text-grey">handler name</div>
           <div className="">.</div>
           <div className="text-base font-normal text-grey">14h</div>
-          <details className="dropdown">
-            <summary className="">
-              <EllipsisVertical className="size-4" />
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-              <li>
-                <a>Edit Post</a>
-              </li>
-              <li
-                onClick={() =>
-                  document.getElementById("post-delete-modal")?.showModal()
-                }
-              >
-                <a>Delete Post</a>
-              </li>
-            </ul>
-          </details>
+          <Dropdown
+            dropDownItems={dropDownItems}
+            Ele={EllipsisIcon}
+            dropDownWrapperClasses="top-[-10px] left-5"
+          />
         </div>
         <div className="text-base font-normal ">{text_content}</div>
         {images.map((imgSrc) => {

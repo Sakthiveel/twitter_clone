@@ -11,15 +11,16 @@ export interface DropDownIconProps {
 export default function Dropdown<T>(props: {
   dropDownItems: Array<DropDownItem<T>>;
   Ele: React.FC<DropDownIconProps>;
+  dropDownWrapperClasses?: string;
 }) {
   const dropDownRef = React.useRef<HTMLDivElement>(null);
   const [isDropdownVisible, setIsDropdownVisible] =
-    React.useState<boolean>(true);
+    React.useState<boolean>(false);
 
   const toggleDropDown = () => {
     setIsDropdownVisible((prevSt) => !prevSt);
   };
-  const { dropDownItems, Ele } = props;
+  const { dropDownItems, Ele, dropDownWrapperClasses } = props;
   React.useEffect(() => {
     const body = document.body as HTMLBodyElement;
 
@@ -49,8 +50,10 @@ export default function Dropdown<T>(props: {
         />
       </div>
       <div
-        className="absolute z-[999] top-8"
-        style={{ display: isDropdownVisible ? "initial" : "none" }}
+        className={`absolute z-[999] top-8 ${dropDownWrapperClasses}`}
+        style={{
+          display: isDropdownVisible ? "initial" : "none",
+        }}
       >
         <div className="border border-grey shadow-sm  shadow-grey rounded-xl bg-defaultBC px-1 py-2">
           <div className="flex flex-col gap-2  w-[140px] h-fit max-h-[100px] overflow-y-auto ">
