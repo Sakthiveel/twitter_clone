@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { logOut } from "../store/AuthAction";
 import { globalLoaderToggle } from "../store/Action";
 import { useNavigate } from "react-router-dom";
+import Dropdown, { DropDownItem } from "./UI/DropDown";
 
 export default function RightSidebar() {
   const dispatch = useDispatch();
@@ -24,6 +25,17 @@ export default function RightSidebar() {
       dispatch(globalLoaderToggle());
     }
   };
+
+  const items: Array<DropDownItem> = [
+    {
+      displayText: "Logout",
+      onClickHandler: handleLogOut,
+    },
+    {
+      displayText: "Go to User Profile",
+      onClickHandler: () => navigate("/settings/user-info"),
+    },
+  ];
   return (
     <div
       className="border-x border-grey py-2 flex flex-col w-[280px]"
@@ -68,20 +80,12 @@ export default function RightSidebar() {
             </div>
           </div>
         </div>
-        <details className="dropdown">
-          <summary className="">
-            <EllipsisVertical className="size-[22px]" />
-          </summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-            <li onClick={handleLogOut}>
-              <a>logout</a>
-            </li>
-            <li onClick={() => navigate("/settings/user-info")}>
-              <a>Go to User Profile</a>
-            </li>
-          </ul>
-        </details>
+        <Dropdown dropDownItems={items} Ele={EllipsisIcon} />
       </div>
     </div>
   );
 }
+
+const EllipsisIcon = () => {
+  return <EllipsisVertical className="size-[22px]" />;
+};

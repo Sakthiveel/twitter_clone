@@ -8,7 +8,14 @@ import ImageUploadIcon from "@mui/icons-material/Image";
 import Button from "./UI/Button";
 import { useDispatch } from "react-redux";
 import { globalLoaderToggle } from "../store/Action";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import Dropdown, { DropDownIconProps, DropDownItem } from "./UI/DropDown";
+
+const dropDownOptions: Array<DropDownItem> = [
+  { displayText: "Everyone", onClickHandler: () => {} },
+  { displayText: "Only Followers", onClickHandler: () => {} },
+  { displayText: "Private", onClickHandler: () => {} },
+];
 
 export default function CreatePost() {
   const defaultPostInfo: Post = {
@@ -46,7 +53,7 @@ export default function CreatePost() {
     [PostKeys.post_id]: uid(5),
     [PostKeys.created_by]: userInfo.uid,
     [PostKeys.text_content]: postInfo?.[PostKeys.text_content],
-    [PostKeys.images]: postInfo?.[PostKeys.images] ?? ["fuck you"],
+    [PostKeys.images]: postInfo?.[PostKeys.images] ?? [""],
     [PostKeys.visibility]: "public", // todo : implement , visibility selector
     [PostKeys.created_at]: new Date(),
   });
@@ -79,22 +86,7 @@ export default function CreatePost() {
         />
       </div>
       <div className="flex flex-col w-full gap-2">
-        <details className="dropdown">
-          <summary className="text-sm font-semibold flex text-mainBlue border-2 border-grey  rounded-lg text-blue-primary w-fit px-2">
-            Everyone can view <ChevronDown className="size-5" />
-          </summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-            <li>
-              <a>Everyone</a>
-            </li>
-            <li>
-              <a>Only followers</a>
-            </li>
-            <li>
-              <a>private</a>
-            </li>
-          </ul>
-        </details>
+        <Dropdown Ele={InternalIcon} dropDownItems={dropDownOptions} />
         <textarea
           className="font-xl font-normal p-2 rounded-xl focus:outline-none"
           placeholder="What's happening ?"
@@ -149,3 +141,33 @@ export default function CreatePost() {
     </div>
   );
 }
+
+const InternalIcon = (props: DropDownIconProps) => {
+  const { isDropdownVisible, onClickHandler } = props;
+  console.log("internalIcon", { isDropdownVisible });
+  return (
+    <div
+      onClick={onClickHandler}
+      className="text-sm font-semibold flex text-mainBlue border-2 border-grey  rounded-lg text-blue-primary w-fit px-2 cursor-pointer"
+    >
+      Everyone can view{" "}
+      {isDropdownVisible ? (
+        <ChevronUp
+          className="size-5"
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onClickHandler();
+          }}
+        />
+      ) : (
+        <ChevronDown
+          className="size-5"
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onClickHandler();
+          }}
+        />
+      )}
+    </div>
+  );
+};
