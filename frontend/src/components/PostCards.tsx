@@ -17,25 +17,33 @@ const EllipsisIcon = (props: DropDownIconProps) => {
   return <EllipsisVertical className="size-4" onClick={onClickHandler} />;
 };
 export default function PostCards(props: PostCardsProps) {
-  const { images = [], text_content, likes_count, created_by } = props.postInfo;
+  const {
+    images = [],
+    text_content,
+    likes_count,
+    created_by,
+    display_Name,
+    created_at,
+  } = props.postInfo;
   console.log("kit", `${import.meta.env.VITE_IMAGE_URL}${created_by}`);
   const dropDownItems: Array<DropDownItem> = [
     { displayText: "Edit Post", onClickHandler: () => {} },
     { displayText: "Delete Post", onClickHandler: () => {} },
   ];
+  const timeToRender = new Date(created_at).getHours();
   return (
     <div className="w-[568px] flex px-4 py-4">
-      <DeleteModal />
       <div className="mr-2">
         <ProfileCard url={`${import.meta.env.VITE_IMAGE_URL}${created_by}`} />
       </div>
       <div className="w-full">
         <div className="flex gap-1 items-center">
-          <div className="text-base font-bold">Name hehre</div>
+          <div className="text-base font-bold">{display_Name}</div>
           <VerifiedIcon className="" />
-          <div className="text-base font-normal text-grey">handler name</div>
-          <div className="">.</div>
-          <div className="text-base font-normal text-grey">14h</div>
+          {/* <div className="text-base font-normal text-grey">handler name</div> */}
+          <div className="text-base font-normal text-grey">
+            {timeToRender + "h"}
+          </div>
           <Dropdown
             dropDownItems={dropDownItems}
             Ele={EllipsisIcon}

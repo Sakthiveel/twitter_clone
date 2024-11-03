@@ -1,5 +1,5 @@
 interface PostCardProps {
-  url: string | null;
+  url: string | undefined;
   classes?: string;
 }
 export default function PostCards(postCardInfo: PostCardProps) {

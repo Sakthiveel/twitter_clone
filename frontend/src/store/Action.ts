@@ -51,7 +51,7 @@ export const BaseSlice = createSlice({
   reducers: {
     globalLoaderToggle: (state) => {
       console.log("global Loader", { state });
-      state.globalLoader = state.globalLoader ? false : true;
+      state.globalLoader = !state.globalLoader;
     },
     updateUserPosts: (state, { payload }) => {
       if (!payload.postsData) {

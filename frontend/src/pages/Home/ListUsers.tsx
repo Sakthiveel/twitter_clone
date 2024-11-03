@@ -11,7 +11,6 @@ import { useDispatch } from "react-redux";
 import { globalLoaderToggle, updateUsersList } from "../../store/Action";
 import { addFollowing, removeFollowing } from "../../Utils";
 import isEqual from "lodash/isEqual";
-import { StarRateTwoTone } from "@mui/icons-material";
 
 interface UserCard {
   [UserKeys.display_name]: string;

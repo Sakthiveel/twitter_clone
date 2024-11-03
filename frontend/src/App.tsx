@@ -54,12 +54,13 @@ function App() {
           }
         } catch (err) {
           console.log({ err });
-          alert("Something went wrong , Please try again");
+        } finally {
+          dispatch(globalLoaderToggle());
         }
-        dispatch(globalLoaderToggle());
         console.log("logged in", { res });
       } else if (!res && auth.isAuthenticated) {
         // dispatch(logOut());
+        console.log("check me");
       }
     });
 

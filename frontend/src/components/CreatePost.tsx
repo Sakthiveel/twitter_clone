@@ -56,6 +56,7 @@ export default function CreatePost() {
     [PostKeys.images]: postInfo?.[PostKeys.images] ?? [""],
     [PostKeys.visibility]: "public", // todo : implement , visibility selector
     [PostKeys.created_at]: new Date(),
+    [PostKeys.display_name]: userInfo?.[UserKeys.display_name],
   });
   const createPostHandler = async () => {
     dispatch(globalLoaderToggle());

@@ -72,6 +72,7 @@ export const userSchema = Joi.object({
 export const PostKeys = {
   post_id: "post_id",
   created_by: "created_by",
+  display_name: "display_Name",
   text_content: "text_content",
   images: "images",
   likes_count: "likes_count",
@@ -93,6 +94,7 @@ export interface Post {
   [PostKeys.images]: Array<File | string>;
   [PostKeys.visibility]: string;
   [PostKeys.created_at]: Date;
+  [PostKeys.display_name]: string;
   [PostKeys.likes_count]?: number;
   [PostKeys.modified_at]?: Date;
 }
@@ -102,6 +104,7 @@ export const PostSchema = Joi.object({
   [PostKeys.created_by]: Joi.string().required(),
   [PostKeys.text_content]: Joi.string().required(),
   [PostKeys.created_at]: Joi.date().required(),
+  [PostKeys.display_name]: Joi.string().required(),
   [PostKeys.modified_at]: Joi.date(),
   [PostKeys.images]: Joi.array(),
   [PostKeys.likes_count]: Joi.number(),

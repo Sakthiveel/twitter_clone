@@ -1,16 +1,20 @@
 import HomeIcon from "@mui/icons-material/HomeOutlined";
 import { logoutHandler } from "../Utils";
 import Button from "./UI/Button";
-import { EllipsisVertical, User } from "lucide-react";
+import { EllipsisVertical, User as ProfileIcon } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logOut } from "../store/AuthAction";
 import { globalLoaderToggle } from "../store/Action";
 import { useNavigate } from "react-router-dom";
 import Dropdown, { DropDownIconProps, DropDownItem } from "./UI/DropDown";
+import { useSelector } from "react-redux";
+import { User, UserKeys } from "../Schema/Schema";
+import PostCards from "./UI/ProfileCard";
 
 export default function RightSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userInfo: User = useSelector((state) => state.auth.userInfo);
   const handleLogOut = async () => {
     dispatch(globalLoaderToggle());
     try {
@@ -38,7 +42,7 @@ export default function RightSidebar() {
   ];
   return (
     <div
-      className="border-x border-grey py-2 flex flex-col w-[280px] fixed h-screen"
+      className="border-x border-grey py-2 flex flex-col w-[280px] sticky"
       style={{ position: "sticky", left: 0 }}
     >
       <div className="pl-1">
@@ -59,7 +63,7 @@ export default function RightSidebar() {
         className="flex items-center gap-2 cursor-pointer py-4 pl-2 hover:bg-grey delay-75"
         onClick={() => navigate("/sdf")}
       >
-        <User className="size-[34px] " />
+        <ProfileIcon className="size-[34px] " />
         <div>Profile</div>
       </div>
       <div className="flex justify-center pt-6">
@@ -67,16 +71,20 @@ export default function RightSidebar() {
           btnText="Post"
           clickHandler={() => {}}
           styles={{ padding: 8 }}
-          classes="w-[90%]"
+          classes="w-[90%] cursor-not-allowed"
         />
       </div>
-      <div className="flex justify-between pl-2 mt-auto pb-2">
+      <div className="flex justify-between p-2 pr-0">
         <div className="flex gap-2">
-          <img src="" alt="profile_photo" className="size-10" />
+          <PostCards
+            url={userInfo?.[UserKeys.profile_photo] as string | undefined}
+          />
           <div className="">
-            <div className="text-norml font-normal leading-5">Sakthi vel</div>
+            <div className="text-norml font-normal leading-5">
+              {userInfo?.[UserKeys.display_name]}
+            </div>
             <div className="text-sm text-grey font-normal leading-4">
-              @shakthi_v2
+              {"@" + userInfo?.[UserKeys.handler_name]}
             </div>
           </div>
         </div>

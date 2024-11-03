@@ -4,7 +4,7 @@ import RightSidebar from "../../components/RightSidebar";
 const AppLayout = () => {
   return (
     <div className="flex justify-center">
-      <div className="flex">
+      <div className="flex relative">
         <RightSidebar />
         <Outlet />
       </div>

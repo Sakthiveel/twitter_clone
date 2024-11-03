@@ -1,7 +1,5 @@
 import React from "react";
-import RightSidebar from "../../components/RightSidebar";
 import PostCards from "../../components/PostCards";
-import CreatePostModal from "./CreatePostModa";
 import { useSelector } from "react-redux";
 import { Post } from "../../Schema/Schema";
 import CreatePost from "../../components/CreatePost";
@@ -52,26 +50,22 @@ export default function Home() {
     ));
   };
   return (
-    <div className="h-screen flex">
-      <div className="flex">
-        <div className="w-[700px] border">
-          <HomeContentNavigate
-            setNavigateOptions={setNavigateOptions}
-            navigateOptions={navigateOptions}
-          />
-          {navigateOptions === 1 && (
-            <>
-              <CreatePost />
-              <RenderPosts />
-            </>
-          )}
-          {navigateOptions === 2 && (
-            <>
-              <ListUsers />
-            </>
-          )}
-        </div>
-      </div>
+    <div className="w-[700px] border overflow-y-auto">
+      <HomeContentNavigate
+        setNavigateOptions={setNavigateOptions}
+        navigateOptions={navigateOptions}
+      />
+      {navigateOptions === 1 && (
+        <>
+          <CreatePost />
+          <RenderPosts />
+        </>
+      )}
+      {navigateOptions === 2 && (
+        <>
+          <ListUsers />
+        </>
+      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { ConstructionOutlined, NetworkCell } from "@mui/icons-material";
 import { Post, PostSchema, User, UserKeys, userSchema } from "./Schema/Schema";
 import { signOut } from "firebase/auth";
 import { auth } from "./Firebase";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultuser: User = {
   age: 12,
   uid: "uid here bro",

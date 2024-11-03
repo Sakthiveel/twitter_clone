@@ -5,7 +5,6 @@ import Button from "../../components/UI/Button";
 import { CalendarDays, CircleCheck, MoveLeft } from "lucide-react";
 import { getUser } from "../../Utils";
 import { UserKeys, User, Post, PostKeys } from "../../Schema/Schema";
-import RightSidebar from "../../components/RightSidebar";
 import PostCards from "../../components/PostCards";
 import { useSelector } from "react-redux";
 

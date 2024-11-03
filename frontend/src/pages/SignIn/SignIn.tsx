@@ -17,7 +17,7 @@ export default function SignIn() {
     null
   );
   const auth = useSelector((state) => state.auth);
-  const tempUserInfo = useSelector((state) => state.tempUserInfo);
+  const tempUserInfo = useSelector((state) => state.auth.tempUserInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const signInHandler = async () => {
@@ -101,7 +101,7 @@ export default function SignIn() {
       console.log("submitHandlerName", { err });
     }
   };
-
+  console.debug({ tempUserInfo });
   return (
     <div>
       {!tempUserInfo?.[UserKeys.uid] ? (
