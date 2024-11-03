@@ -38,7 +38,7 @@ export default function RightSidebar() {
   ];
   return (
     <div
-      className="border-x border-grey py-2 flex flex-col w-[280px]"
+      className="border-x border-grey py-2 flex flex-col w-[280px] fixed h-screen"
       style={{ position: "sticky", left: 0 }}
     >
       <div className="pl-1">
@@ -56,13 +56,13 @@ export default function RightSidebar() {
         );
       })}
       <div
-        className="flex items-center gap-2 cursor-pointer mb-4 py-4 pl-2 hover:bg-grey delay-75"
+        className="flex items-center gap-2 cursor-pointer py-4 pl-2 hover:bg-grey delay-75"
         onClick={() => navigate("/sdf")}
       >
         <User className="size-[34px] " />
         <div>Profile</div>
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-6">
         <Button
           btnText="Post"
           clickHandler={() => {}}
@@ -70,7 +70,7 @@ export default function RightSidebar() {
           classes="w-[90%]"
         />
       </div>
-      <div className="flex justify-between my-4 pl-2">
+      <div className="flex justify-between pl-2 mt-auto pb-2">
         <div className="flex gap-2">
           <img src="" alt="profile_photo" className="size-10" />
           <div className="">
@@ -80,7 +80,11 @@ export default function RightSidebar() {
             </div>
           </div>
         </div>
-        <Dropdown dropDownItems={items} Ele={EllipsisIcon} />
+        <Dropdown
+          dropDownItems={items}
+          Ele={EllipsisIcon}
+          dropDownWrapperClasses="top-[-60px] left-5"
+        />
       </div>
     </div>
   );

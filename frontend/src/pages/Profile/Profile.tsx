@@ -39,87 +39,84 @@ export default function Profile() {
   }, []);
   console.log("profile", { userInfo, userPosts });
   return (
-    <div className="flex">
-      <RightSidebar />
-      <div>
-        <div className="w-[570px]">
-          <div className="flex px-4 gap-6 items-center">
-            <MoveLeft
-              className="size-6 hover:cursor-pointer"
-              onClick={() => navigate("/home")}
-            />
-            <div>
-              <div className="text-xl font-bold">
-                {userInfo?.[UserKeys.display_name]}
-              </div>
-              <div className="text-sm text-grey">45 posts</div>
+    <div>
+      <div className="w-[700px]">
+        <div className="flex px-4 gap-6 items-center">
+          <MoveLeft
+            className="size-6 hover:cursor-pointer"
+            onClick={() => navigate("/home")}
+          />
+          <div>
+            <div className="text-xl font-bold">
+              {userInfo?.[UserKeys.display_name]}
             </div>
+            <div className="text-sm text-grey">45 posts</div>
           </div>
-          {!userInfo?.[UserKeys.bg_photo] && (
-            <div
-              className={`size-44 w-full bg-[url('${
-                userInfo?.[UserKeys.bg_photo]
-              }')]`}
-            ></div>
-          )}
-          {userInfo?.[UserKeys.bg_photo] && (
-            <img
-              className="size-44 w-full aspect-video object-cover"
-              src={userInfo?.[UserKeys.bg_photo] as string}
-              alt="user_bg_photo"
-            />
-          )}
-          <div className="p-4 pt-0">
-            <div className="flex w-full h-[100px] justify-between">
-              <div className="relative">
-                <ProfileCard
-                  classes={"size-28 absolute bottom-[30px]"}
-                  url={userInfo?.[UserKeys.profile_photo] as string | null}
-                />
-              </div>
-              {auth.userInfo.uid === userInfo.uid && (
-                <Button
-                  clickHandler={() => navigate("/settings/user-info")}
-                  btnText="Edit Profile"
-                  btnVariant={"outline"}
-                  styles={{ marginTop: 12 }}
-                />
-              )}
+        </div>
+        {!userInfo?.[UserKeys.bg_photo] && (
+          <div
+            className={`size-44 w-full bg-[url('${
+              userInfo?.[UserKeys.bg_photo]
+            }')]`}
+          ></div>
+        )}
+        {userInfo?.[UserKeys.bg_photo] && (
+          <img
+            className="size-44 w-full aspect-video object-cover"
+            src={userInfo?.[UserKeys.bg_photo] as string}
+            alt="user_bg_photo"
+          />
+        )}
+        <div className="p-4 pt-0">
+          <div className="flex w-full h-[100px] justify-between">
+            <div className="relative">
+              <ProfileCard
+                classes={"size-28 absolute bottom-[30px]"}
+                url={userInfo?.[UserKeys.profile_photo] as string | null}
+              />
             </div>
-            <div className="">
-              <div className="flex flex-col">
-                <div className="flex gap-2">
-                  <div className="text-xl font-extrabold">
-                    {userInfo?.[UserKeys.display_name]}
-                  </div>
-                  <div className="border rounded-3xl flex py-1 px-2 items-center gap-1">
-                    <CircleCheck className="size-5" />
-                    <div className="text-sm font-bold border-grey">
-                      Get Verified
-                    </div>
-                  </div>
+            {auth.userInfo.uid === userInfo.uid && (
+              <Button
+                clickHandler={() => navigate("/settings/user-info")}
+                btnText="Edit Profile"
+                btnVariant={"outline"}
+                styles={{ marginTop: 12 }}
+              />
+            )}
+          </div>
+          <div className="">
+            <div className="flex flex-col">
+              <div className="flex gap-2">
+                <div className="text-xl font-extrabold">
+                  {userInfo?.[UserKeys.display_name]}
                 </div>
-                <div className="text-sm text-grey">
-                  {`@${userInfo?.[UserKeys.handler_name]}`}
+                <div className="border rounded-3xl flex py-1 px-2 items-center gap-1">
+                  <CircleCheck className="size-5" />
+                  <div className="text-sm font-bold border-grey">
+                    Get Verified
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center  gap-1 mt-3">
-                <CalendarDays className="text-grey size-4" />
-                <div className="text-sm text-grey ">Joined February 2023</div>
+              <div className="text-sm text-grey">
+                {`@${userInfo?.[UserKeys.handler_name]}`}
               </div>
-              <div className="flex gap-2 mt-1">
-                <div className="text-sm">
-                  64 <span className="text-sm text-grey">Following</span>
-                </div>
-                <div className="text-sm">
-                  85 <span className="text-sm text-grey">Followers</span>
-                </div>
+            </div>
+            <div className="flex items-center  gap-1 mt-3">
+              <CalendarDays className="text-grey size-4" />
+              <div className="text-sm text-grey ">Joined February 2023</div>
+            </div>
+            <div className="flex gap-2 mt-1">
+              <div className="text-sm">
+                64 <span className="text-sm text-grey">Following</span>
+              </div>
+              <div className="text-sm">
+                85 <span className="text-sm text-grey">Followers</span>
               </div>
             </div>
           </div>
         </div>
-        <RenderUserPosts userPosts={userPosts} auth={auth} />
       </div>
+      <RenderUserPosts userPosts={userPosts} auth={auth} />
     </div>
   );
 }

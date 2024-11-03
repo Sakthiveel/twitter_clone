@@ -52,12 +52,9 @@ export default function Home() {
     ));
   };
   return (
-    <div className="w-full h-full flex justify-center border">
-      <div className=" w-[100%] flex" style={{ position: "relative" }}>
-        <CreatePostModal />
-        {/* <Modal id="create_post_modal" children={<div>Hello </div>} /> */}
-        <RightSidebar />
-        <div className="w-[100%] border" style={{ borderWidth: 1 }}>
+    <div className="h-screen flex">
+      <div className="flex">
+        <div className="w-[700px] border">
           <HomeContentNavigate
             setNavigateOptions={setNavigateOptions}
             navigateOptions={navigateOptions}

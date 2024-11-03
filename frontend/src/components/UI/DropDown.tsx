@@ -41,6 +41,9 @@ export default function Dropdown<T>(props: {
       body.removeEventListener("click", handleClickOutside);
     };
   }, [isDropdownVisible]);
+  //todo: create an portan for the dropdown Items
+  // todo: attach it to the body
+  // todo: need to calucate the rendering position based on the viewport , getBoucingReact()
   return (
     <div className="relative" ref={dropDownRef}>
       <div>
@@ -50,7 +53,7 @@ export default function Dropdown<T>(props: {
         />
       </div>
       <div
-        className={`absolute z-[999] top-8 ${dropDownWrapperClasses}`}
+        className={`absolute ${dropDownWrapperClasses}`}
         style={{
           display: isDropdownVisible ? "initial" : "none",
         }}

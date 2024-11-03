@@ -15,6 +15,8 @@ import { Following, Post, tempUser, UserKeys } from "./Schema/Schema";
 import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
 import UserInfo from "./pages/settings/UserInfo";
 import Profile from "./pages/Profile/Profile";
+import RightSidebar from "./components/RightSidebar";
+import AppLayout from "./pages/Layout/Main";
 
 function App() {
   const auth = useSelector((state) => state.auth);
@@ -112,17 +114,19 @@ function App() {
     return auth.isAuthenticated ? element : <Navigate to={"/sign-in"} />;
   };
   return (
-    <div className="flex w-full h-full justify-center">
+    <div className="">
       <Routes>
-        <Route path="/" element={<ProtectRoutes element={<Home />} />} />
-        <Route path="/home" element={<ProtectRoutes element={<Home />} />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<ProtectRoutes element={<Home />} />} />
+          <Route path="/home" element={<ProtectRoutes element={<Home />} />} />
+          <Route
+            path="/:handler_name"
+            element={<ProtectRoutes element={<Profile />} />}
+          />
+        </Route>
         {/* <Route path="/home" element={<Home />} /> */}
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="settings/user-info" element={<UserInfo />} />
-        <Route
-          path="/:handler_name"
-          element={<ProtectRoutes element={<Profile />} />}
-        />
       </Routes>
     </div>
   );
